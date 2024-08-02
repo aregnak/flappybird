@@ -88,7 +88,9 @@ int main()
                 wall.drawTo(window);
             }
 
-            //auto newWall = std::remove_if(wallX < )
+            walls.erase(std::remove_if(walls.begin(), walls.end(),
+                                       [&window](const Wall& wall) { return wall.getPos() < -60; }),
+                        walls.end());
 
             sf::Vector2f playerPos = bird.getPos();
 

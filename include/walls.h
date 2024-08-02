@@ -21,7 +21,7 @@ public:
         //
     }
 
-    float getPos()
+    float getPos() const
     {
         return wall.getPosition().x; //
     }

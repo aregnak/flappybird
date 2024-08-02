@@ -9,7 +9,7 @@ public:
         : _gravity(1800.f)
         , _jump(-600.f)
         , _velocity(0.f)
-        , _terminalVelocity(400.f)
+        , _terminalVelocity(600.f)
         , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
     {
