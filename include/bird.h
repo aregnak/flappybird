@@ -6,8 +6,8 @@ class Bird
 {
 public:
     Bird(float x, float y)
-        : _gravity(1000.f)
-        , _jump(-300.f)
+        : _gravity(1800.f)
+        , _jump(-600.f)
         , _velocity(0.f)
         , _terminalVelocity(400.f)
         , _jumpCooldown(sf::seconds(0.1f))
@@ -43,9 +43,21 @@ public:
             _velocity = _terminalVelocity;
         }
 
+        if (bird.getPosition().y >= 750)
+        {
+            //_velocity = 0;
+        }
+
         bird.move(0, _velocity * deltaTime.asSeconds());
 
-        std::cout << "Velocity: " << bird.getPosition().y << std::endl;
+        // std::cout << "Velocity: " << bird.getPosition().y << std::endl;
+    }
+
+    void reset()
+    {
+        _velocity = 0.f;
+        _canJump = true;
+        bird.setPosition(sf::Vector2f(100, 300));
     }
 
     void drawTo(sf::RenderWindow& window) { window.draw(bird); }

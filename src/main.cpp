@@ -6,10 +6,26 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <algorithm>
+#include <cinttypes>
+#include <vector>
+#include <iostream>
 
 #include "bird.h"
+#include "walls.h"
+
+void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float wallX)
+{
+    if (wallX < (float)window.getSize().x / 2)
+    {
+        float wallY = (rand() % (600 - 200 + 1) + 200);
+        walls.push_back(Wall(window.getSize().x, wallY));
+        walls.push_back(Wall(window.getSize().x, wallY - 875));
+    }
+}
 
 int main()
 {
@@ -22,6 +38,10 @@ int main()
     sf::Clock timer;
 
     Bird bird(30, 30);
+    std::vector<Wall> walls;
+
+    float wallX;
+    bool gameOver;
 
     //sf::RectangleShape rect;
     //rect.setSize(sf::Vector2f(100, 100));
@@ -40,24 +60,48 @@ int main()
             {
                 window.close();
             }
-
             else if (event.type == event.KeyPressed)
             {
+                if (gameOver && event.key.code == sf::Keyboard::Enter)
+                {
+                    gameOver = false;
+                    bird.reset();
+                    walls.clear();
+                }
+
+                else if (!gameOver)
+                    // float wallX = walls.getPos();
+                    bird.handleEvent(event);
             }
-            bird.handleEvent(event);
         }
-
-        sf::Vector2f playerPos = bird.getPos();
-
-        if (playerPos.y >= 750)
-        {
-            window.close();
-        }
-
-        bird.update(deltaTime);
 
         window.clear();
-        bird.drawTo(window);
-        window.display();
+
+        if (!gameOver)
+        {
+            spawnWalls(window, walls, wallX);
+
+            for (Wall& wall : walls)
+            {
+                wallX = wall.getPos();
+                wall.update(deltaTime);
+                wall.drawTo(window);
+            }
+
+            //auto newWall = std::remove_if(wallX < )
+
+            sf::Vector2f playerPos = bird.getPos();
+
+            if (playerPos.y >= window.getSize().y - 50)
+            {
+                //window.close();
+                gameOver = true;
+            }
+
+            bird.update(deltaTime);
+
+            bird.drawTo(window);
+            window.display();
+        }
     }
 }
