@@ -20,7 +20,7 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
     {
         float wallY = (rand() % (600 - 200 + 1) + 200);
         walls.push_back(Wall(window.getSize().x, wallY));
-        walls.push_back(Wall(window.getSize().x, wallY - 900));
+        walls.push_back(Wall(window.getSize().x, wallY - 880));
     }
 }
 
@@ -57,14 +57,12 @@ int main()
     }
     bgTexture.setRepeated(true);
 
-    sf::Sprite bg1(bgTexture);
-    sf::Sprite bg2(bgTexture);
-    bg1.setTextureRect(sf::IntRect(0, 0, window.getSize().x * 3, window.getSize().y * 3));
-    bg1.setScale(3.f, 3.5f);
-    bg2.setTextureRect(sf::IntRect(0, 0, window.getSize().x * 3, window.getSize().y * 3));
-    bg2.setScale(3.f, 3.5f);
+    sf::Sprite bg(bgTexture);
+    bg.setTextureRect(sf::IntRect(0, 0, window.getSize().x - (window.getSize().x / 3.f),
+                                  window.getSize().y - (window.getSize().y / 2.f)));
+    bg.setScale(window.getSize().x / 256.f, window.getSize().y / 256.f);
 
-    const float bgScrollSpeed = 1000.f;
+    const float bgScrollSpeed = 100.f;
 
     sf::Text gameOverText;
     gameOverText.setFont(font);
@@ -72,8 +70,8 @@ int main()
     gameOverText.setCharacterSize(50);
     gameOverText.setFillColor(sf::Color::White);
     gameOverText.setStyle(sf::Text::Bold);
-    gameOverText.setPosition(window.getSize().x / 2 - gameOverText.getLocalBounds().width / 2,
-                             window.getSize().y / 2 - gameOverText.getLocalBounds().height / 2);
+    gameOverText.setPosition(window.getSize().x / 2.f - gameOverText.getLocalBounds().width / 2,
+                             window.getSize().y / 2.f - gameOverText.getLocalBounds().height / 2);
 
     while (window.isOpen())
     {
@@ -93,9 +91,7 @@ int main()
                     gameOver = false;
                     bird.reset();
                     walls.clear();
-                    walls.push_back(Wall(50, window.getSize().y));
-
-                    // spawnWalls(window, walls, wallX);
+                    walls.push_back(Wall(60, window.getSize().y));
                     continue;
                 }
                 else if (!gameOver)
@@ -110,27 +106,20 @@ int main()
         if (!gameOver)
         {
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
-            bg1.move(-moveDistance, 0);
+            bg.move(-moveDistance, 0);
 
-            std::cout << bg1.getPosition().x << std::endl;
-            //if (bg1.getPosition().x >= -8000)
-            //{
-            //    bg1.setPosition(0, 0);
-            //}
-            // if (bg2.getPosition().x <= -window.getSize().x)
-            // {
-            //     bg2.setPosition(window.getSize().x, 0);
-            // }
-            //bg2.move(-moveDistance, 0);
+            std::cout << bg.getPosition().x << std::endl;
+            if (bg.getPosition().x <= -800)
+            {
+                bg.setPosition(0, 0);
+            }
 
-            window.draw(bg1);
-            window.draw(bg2);
+            window.draw(bg);
 
             bird.update(deltaTime);
             bird.drawTo(window);
 
             spawnWalls(window, walls, wallX);
-
             for (Wall& wall : walls)
             {
                 wallX = wall.getPos();
@@ -154,7 +143,7 @@ int main()
         }
         else
         {
-            window.draw(bg1);
+            window.draw(bg);
             window.draw(gameOverText);
 
             window.display();
