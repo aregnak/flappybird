@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
@@ -48,6 +49,23 @@ int main()
         return 1;
     }
 
+    sf::Texture bgTexture;
+    if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
+    {
+        std::cout << "back ground texture failed" << std::endl;
+        system("pause");
+    }
+    bgTexture.setRepeated(true);
+
+    sf::Sprite bg1(bgTexture);
+    sf::Sprite bg2(bgTexture);
+    bg1.setTextureRect(sf::IntRect(0, 0, window.getSize().x * 3, window.getSize().y * 3));
+    bg1.setScale(3.f, 3.5f);
+    bg2.setTextureRect(sf::IntRect(0, 0, window.getSize().x * 3, window.getSize().y * 3));
+    bg2.setScale(3.f, 3.5f);
+
+    const float bgScrollSpeed = 1000.f;
+
     sf::Text gameOverText;
     gameOverText.setFont(font);
     gameOverText.setString("Game Over!\nPress Enter to Restart");
@@ -91,6 +109,23 @@ int main()
 
         if (!gameOver)
         {
+            float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
+            bg1.move(-moveDistance, 0);
+
+            std::cout << bg1.getPosition().x << std::endl;
+            //if (bg1.getPosition().x >= -8000)
+            //{
+            //    bg1.setPosition(0, 0);
+            //}
+            // if (bg2.getPosition().x <= -window.getSize().x)
+            // {
+            //     bg2.setPosition(window.getSize().x, 0);
+            // }
+            //bg2.move(-moveDistance, 0);
+
+            window.draw(bg1);
+            window.draw(bg2);
+
             bird.update(deltaTime);
             bird.drawTo(window);
 
@@ -119,7 +154,9 @@ int main()
         }
         else
         {
+            window.draw(bg1);
             window.draw(gameOverText);
+
             window.display();
         }
     }

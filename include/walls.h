@@ -13,7 +13,7 @@ public:
         : _moveSpeed(-350.f)
     {
         wall.setPosition(x, y);
-        wall.setSize(sf::Vector2f(60, 700));
+        wall.setSize(sf::Vector2f(80, 700));
 
         if (!texture.loadFromFile("res/sprite/pipetest.png"))
         {
