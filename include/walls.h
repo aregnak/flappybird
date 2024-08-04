@@ -3,6 +3,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <iostream>
 
 class Wall
 {
@@ -12,6 +14,14 @@ public:
     {
         wall.setPosition(x, y);
         wall.setSize(sf::Vector2f(60, 700));
+
+        if (!texture.loadFromFile("res/sprite/pipetest.png"))
+        {
+            std::cout << "pipe texture failed" << std::endl;
+            system("pause");
+        }
+
+        wall.setTexture(&texture);
         //
     }
 
@@ -33,7 +43,7 @@ public:
 
 private:
     sf::RectangleShape wall;
-    // sf::RectangleShape wall2;
+    static sf::Texture texture;
 
     float _moveSpeed;
 };

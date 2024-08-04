@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <algorithm>
@@ -10,6 +11,8 @@
 #include "bird.h"
 #include "walls.h"
 
+sf::Texture Wall::texture;
+
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
     if (wallX < window.getSize().x / 2)
@@ -17,7 +20,6 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
         float wallY = (rand() % (600 - 200 + 1) + 200);
         walls.push_back(Wall(window.getSize().x, wallY));
         walls.push_back(Wall(window.getSize().x, wallY - 900));
-        std::cout << "walls " << std::endl;
     }
 }
 
@@ -33,14 +35,14 @@ int main()
 
     sf::Clock timer;
 
-    Bird bird(30, 30);
+    Bird bird(35, 35);
     std::vector<Wall> walls;
 
     bool gameOver = false;
     float wallX;
 
     sf::Font font;
-    if (!font.loadFromFile("res/font/SuperMario256.ttf"))
+    if (!font.loadFromFile("res/font/Hey Comic.ttf"))
     {
         std::cerr << "Could not load font" << std::endl;
         return 1;
@@ -73,7 +75,9 @@ int main()
                     gameOver = false;
                     bird.reset();
                     walls.clear();
-                    spawnWalls(window, walls, wallX);
+                    walls.push_back(Wall(50, window.getSize().y));
+
+                    // spawnWalls(window, walls, wallX);
                     continue;
                 }
                 else if (!gameOver)

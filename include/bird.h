@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
 
@@ -16,6 +17,15 @@ public:
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
         bird.setPosition(sf::Vector2f(100, 300));
+        bird.setRotation(0);
+
+        if (!texture.loadFromFile("res/sprite/bird1test1.png"))
+        {
+            std::cout << "failed to load bird texture" << std::endl;
+            system("pause");
+        }
+
+        bird.setTexture(&texture);
     }
 
     void handleEvent(const sf::Event& event)
@@ -49,7 +59,7 @@ public:
         }
 
         bird.move(0, _velocity * deltaTime.asSeconds());
-
+        bird.rotate(_velocity / 300);
         // std::cout << "Velocity: " << bird.getPosition().y << std::endl;
     }
 
@@ -58,6 +68,7 @@ public:
         _velocity = 0.f;
         _canJump = true;
         bird.setPosition(sf::Vector2f(100, 300));
+        bird.setRotation(0);
     }
 
     void drawTo(sf::RenderWindow& window) { window.draw(bird); }
@@ -66,6 +77,8 @@ public:
 
 private:
     sf::RectangleShape bird;
+    sf::Texture texture;
+
     float _gravity;
     float _jump;
     float _velocity;
