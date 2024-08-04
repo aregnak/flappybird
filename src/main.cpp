@@ -4,7 +4,6 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <algorithm>
-#include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -16,7 +15,7 @@ sf::Texture Wall::texture;
 
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
-    if (wallX < window.getSize().x / 2)
+    if (wallX < window.getSize().x / 2.f)
     {
         float wallY = (rand() % (600 - 200 + 1) + 200);
         walls.push_back(Wall(window.getSize().x, wallY));
