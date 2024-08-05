@@ -33,7 +33,7 @@ public:
         //
     }
 
-    float getPos() const
+    float getX() const
     {
         return wall.getPosition().x; //
     }

@@ -43,13 +43,15 @@ int main()
     bool gameOver = false;
     float wallX = 0;
     int score = 0;
+    bool isPassed = false;
 
     sf::Font font;
-    if (!font.loadFromFile("res/font/Hey Comic.ttf"))
+    if (!font.loadFromFile("res/font/Neon.ttf"))
     {
         std::cerr << "Could not load font" << std::endl;
         return 1;
     }
+    font.setSmooth(true);
 
     sf::Texture bgTexture;
     if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
@@ -77,6 +79,14 @@ int main()
     gameOverText.setOutlineColor(sf::Color::Black);
     gameOverText.setOutlineThickness(5.f);
 
+    sf::Text scoreText;
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(30);
+    scoreText.setFillColor(sf::Color::White);
+    scoreText.setPosition(10, 10);
+    scoreText.setOutlineColor(sf::Color::Black);
+    scoreText.setOutlineThickness(5.f);
+
     while (window.isOpen())
     {
         sf::Time deltaTime = timer.restart();
@@ -96,6 +106,7 @@ int main()
                     bird.reset();
                     walls.clear();
                     walls.push_back(Wall(60, window.getSize().y));
+                    score = 0;
                     continue;
                 }
                 else if (!gameOver)
@@ -123,26 +134,32 @@ int main()
 
             for (Wall& wall : walls)
             {
-                wallX = wall.getPos();
+                wallX = wall.getX();
                 wall.update(deltaTime);
                 wall.drawTo(window);
 
                 if (wall.collision(bird.getShape()))
                 {
-                    gameOver = true;
-                    // /std::cout << "wall hit" << std::endl;
+                    // gameOver = true;
                 }
 
-                if (wallX == bird.getPos().y)
+                // Check if the bird has passed the wall
+                if (!isPassed && wall.getX() < bird.getPos().x &&
+                    wall.getX() > bird.getPos().x - 20)
                 {
+                    isPassed = true;
                     score++;
-                    std::cout << score << std::endl;
+                }
+
+                if (wall.getX() < -80)
+                {
+                    isPassed = false;
                 }
             }
             spawnWalls(window, walls, wallX);
 
             walls.erase(std::remove_if(walls.begin(), walls.end(),
-                                       [](const Wall& wall) { return wall.getPos() < -60; }),
+                                       [](const Wall& wall) { return wall.getX() < -80; }),
                         walls.end());
 
             sf::Vector2f playerPos = bird.getPos();
@@ -151,6 +168,10 @@ int main()
             {
                 gameOver = true;
             }
+
+            scoreText.setString("Score  " + std::to_string(score));
+            window.draw(scoreText);
+            std::cout << isPassed << std::endl;
 
             window.display();
         }
