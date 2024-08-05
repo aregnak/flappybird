@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <algorithm>
+#include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -71,6 +73,8 @@ int main()
     gameOverText.setStyle(sf::Text::Bold);
     gameOverText.setPosition(window.getSize().x / 2.f - gameOverText.getLocalBounds().width / 2,
                              window.getSize().y / 2.f - gameOverText.getLocalBounds().height / 2);
+    gameOverText.setOutlineColor(sf::Color::Black);
+    gameOverText.setOutlineThickness(5.f);
 
     while (window.isOpen())
     {
@@ -106,8 +110,6 @@ int main()
         {
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
             bg.move(-moveDistance, 0);
-
-            std::cout << bg.getPosition().x << std::endl;
             if (bg.getPosition().x <= -800)
             {
                 bg.setPosition(0, 0);
@@ -135,7 +137,6 @@ int main()
             if (playerPos.y >= window.getSize().y - 50)
             {
                 gameOver = true;
-                std::cout << "Game over" << std::endl;
             }
 
             window.display();

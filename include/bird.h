@@ -16,7 +16,7 @@ public:
     {
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
-        bird.setPosition(sf::Vector2f(100, 300));
+        bird.setPosition(100, 300);
         bird.setRotation(0);
 
         if (!texture.loadFromFile("res/sprite/bird1test1.png"))
@@ -53,14 +53,8 @@ public:
             _velocity = _terminalVelocity;
         }
 
-        if (bird.getPosition().y >= 750)
-        {
-            //_velocity = 0;
-        }
-
         bird.move(0, _velocity * deltaTime.asSeconds());
         bird.rotate(_velocity / 300);
-        // std::cout << "Velocity: " << bird.getPosition().y << std::endl;
     }
 
     void reset()
