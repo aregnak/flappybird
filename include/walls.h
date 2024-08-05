@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -39,6 +41,11 @@ public:
     void drawTo(sf::RenderWindow& window)
     {
         window.draw(wall); //
+    }
+
+    bool collision(const sf::Shape& item) const
+    {
+        return wall.getGlobalBounds().intersects(item.getGlobalBounds());
     }
 
 private:

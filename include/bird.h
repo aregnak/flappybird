@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
@@ -65,9 +66,20 @@ public:
         bird.setRotation(0);
     }
 
-    void drawTo(sf::RenderWindow& window) { window.draw(bird); }
+    void drawTo(sf::RenderWindow& window)
+    {
+        window.draw(bird); //
+    }
 
-    sf::Vector2f getPos() { return bird.getPosition(); }
+    sf::Vector2f getPos()
+    {
+        return bird.getPosition(); //
+    }
+
+    sf::RectangleShape getShape() const
+    {
+        return bird; //
+    }
 
 private:
     sf::RectangleShape bird;

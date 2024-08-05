@@ -41,7 +41,8 @@ int main()
     std::vector<Wall> walls;
 
     bool gameOver = false;
-    float wallX;
+    float wallX = 0;
+    int score = 0;
 
     sf::Font font;
     if (!font.loadFromFile("res/font/Hey Comic.ttf"))
@@ -120,13 +121,25 @@ int main()
             bird.update(deltaTime);
             bird.drawTo(window);
 
-            spawnWalls(window, walls, wallX);
             for (Wall& wall : walls)
             {
                 wallX = wall.getPos();
                 wall.update(deltaTime);
                 wall.drawTo(window);
+
+                if (wall.collision(bird.getShape()))
+                {
+                    gameOver = true;
+                    // /std::cout << "wall hit" << std::endl;
+                }
+
+                if (wallX == bird.getPos().y)
+                {
+                    score++;
+                    std::cout << score << std::endl;
+                }
             }
+            spawnWalls(window, walls, wallX);
 
             walls.erase(std::remove_if(walls.begin(), walls.end(),
                                        [](const Wall& wall) { return wall.getPos() < -60; }),
