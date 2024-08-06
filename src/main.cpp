@@ -40,11 +40,12 @@ int main()
     sf::Clock timer;
     sf::Clock gameTimer;
 
-    Bird bird(50, 50);
+    Bird bird(45, 45);
     std::vector<Wall> walls;
 
     bool gameOver = false;
     bool mainMenu = true;
+    bool gamePaused = false;
 
     float wallX = 0;
     int score = 0;
@@ -61,7 +62,7 @@ int main()
     font.setSmooth(true);
 
     sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("res/sprite/Background/Background3.png"))
+    if (!bgTexture.loadFromFile("res/sprite/Background/Background8.png"))
     {
         std::cout << "back ground texture failed" << std::endl;
         system("pause");
@@ -77,7 +78,7 @@ int main()
 
     sf::Text gameOverText;
     gameOverText.setFont(font);
-    gameOverText.setString("Game Over!\nPress Enter to Restart");
+    gameOverText.setString("Game Over!\nPress Space to Restart");
     gameOverText.setCharacterSize(50);
     gameOverText.setFillColor(sf::Color::White);
     gameOverText.setStyle(sf::Text::Bold);
@@ -85,6 +86,28 @@ int main()
                              window.getSize().y / 2.f - gameOverText.getLocalBounds().height / 2);
     gameOverText.setOutlineColor(sf::Color::Black);
     gameOverText.setOutlineThickness(5.f);
+
+    sf::Text mainMenuText;
+    mainMenuText.setFont(font);
+    mainMenuText.setString("Flappy Bird\nPress Space to start");
+    mainMenuText.setCharacterSize(50);
+    mainMenuText.setFillColor(sf::Color::White);
+    mainMenuText.setStyle(sf::Text::Bold);
+    mainMenuText.setPosition(window.getSize().x / 2.f - mainMenuText.getLocalBounds().width / 2,
+                             window.getSize().y / 2.f - mainMenuText.getLocalBounds().height / 2);
+    mainMenuText.setOutlineColor(sf::Color::Black);
+    mainMenuText.setOutlineThickness(5.f);
+
+    sf::Text pausedText;
+    pausedText.setFont(font);
+    pausedText.setString("Flappy Bird\nPress Space to start");
+    pausedText.setCharacterSize(50);
+    pausedText.setFillColor(sf::Color::White);
+    pausedText.setStyle(sf::Text::Bold);
+    pausedText.setPosition(window.getSize().x / 2.f - mainMenuText.getLocalBounds().width / 2,
+                           window.getSize().y / 2.f - pausedText.getLocalBounds().height / 2);
+    pausedText.setOutlineColor(sf::Color::Black);
+    pausedText.setOutlineThickness(5.f);
 
     sf::Text scoreText;
     scoreText.setFont(font);
@@ -107,7 +130,7 @@ int main()
             }
             else if (event.type == sf::Event::KeyPressed)
             {
-                if (gameOver && event.key.code == sf::Keyboard::Enter)
+                if (gameOver && event.key.code == sf::Keyboard::Space)
                 {
                     gameOver = false;
                     isHit = false;
@@ -118,10 +141,28 @@ int main()
                     continue;
                 }
 
-                // if (mainMenu && event.key.code == sf::Keyboard::Space)
-                // {
-                // }
-                else if (!gameOver) //&& !mainMenu)
+                if (mainMenu && event.key.code == sf::Keyboard::Space)
+                {
+                    mainMenu = false;
+                    continue;
+                }
+
+                if (!gamePaused && !mainMenu && !gameOver &&
+                        event.key.code == sf::Keyboard::Escape ||
+                    !gamePaused && !mainMenu && !gameOver && event.key.code == sf::Keyboard::P)
+                {
+                    gamePaused = true;
+                    continue;
+                }
+                else if (gamePaused && !mainMenu && !gameOver &&
+                             event.key.code == sf::Keyboard::Escape ||
+                         gamePaused && !mainMenu && !gameOver && event.key.code == sf::Keyboard::P)
+                {
+                    gamePaused = false;
+                    continue;
+                }
+
+                else if (!gameOver && !mainMenu && !gamePaused)
                 {
                     bird.handleEvent(event);
                 }
@@ -130,7 +171,7 @@ int main()
 
         window.clear();
 
-        if (!gameOver)
+        if (!gameOver && !mainMenu && !gamePaused)
         {
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
             bg.move(-moveDistance, 0);
@@ -205,10 +246,24 @@ int main()
 
             window.display();
         }
-        else
+        else if (gameOver && !mainMenu)
         {
             window.draw(bg);
             window.draw(gameOverText);
+
+            window.display();
+        }
+        else if (mainMenu && !gamePaused)
+        {
+            window.draw(bg);
+            window.draw(mainMenuText);
+
+            window.display();
+        }
+        else if (gamePaused)
+        {
+            window.draw(bg);
+            window.draw(pausedText);
 
             window.display();
         }

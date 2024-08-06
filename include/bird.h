@@ -11,10 +11,10 @@ class Bird
 public:
     Bird(float x, float y)
         : _gravity(1800.f)
-        , _jump(-600.f)
+        , _jump(-650.f)
         , _velocity(0.f)
         , _terminalVelocity(600.f)
-        , _jumpCooldown(sf::seconds(0.15f))
+        , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
         , _rotate(0.f)
     {
@@ -23,7 +23,7 @@ public:
         bird.setPosition(100, 300);
         bird.setRotation(0);
 
-        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-1.png"))
+        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-2.png"))
         {
             std::cout << "failed to load bird texture" << std::endl;
             system("pause");
@@ -58,7 +58,7 @@ public:
                 _canJump = true;
             }
 
-            if (clock.getElapsedTime().asSeconds() > 0.0375f)
+            if (clock.getElapsedTime().asSeconds() > 0.025f)
             {
                 if (birdTextRect.left == 48)
                 {
