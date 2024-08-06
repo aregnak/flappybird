@@ -144,7 +144,7 @@ int main()
 
                 if (wall.collision(bird.getShape()))
                 {
-                    bird.deathAnimation();
+                    //bird.deathAnimation();
 
                     if (!isHit)
                     {
@@ -152,15 +152,12 @@ int main()
 
                         currentTime = gameTimer.getElapsedTime().asSeconds();
                     }
-
-                    std::cout << gameTimer.getElapsedTime().asSeconds() - currentTime << std::endl;
                 }
                 if (isHit)
                 {
                     if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.3)
                     {
-                        std::cout << currentTime << std::endl;
-                        gameOver = true;
+                        //gameOver = true;
                     }
                 }
 

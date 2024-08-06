@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
 
@@ -12,7 +14,7 @@ public:
         , _jump(-600.f)
         , _velocity(0.f)
         , _terminalVelocity(600.f)
-        , _jumpCooldown(sf::seconds(0.1f))
+        , _jumpCooldown(sf::seconds(0.15f))
         , _canJump(true)
         , _rotate(0.f)
     {
@@ -21,12 +23,13 @@ public:
         bird.setPosition(100, 300);
         bird.setRotation(0);
 
-        if (!texture.loadFromFile("res/sprite/bird1test1.png"))
+        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-6.png"))
         {
             std::cout << "failed to load bird texture" << std::endl;
             system("pause");
         }
-
+        birdTextRect = sf::IntRect(0, 0, 16, 16);
+        bird.setTextureRect(birdTextRect);
         bird.setTexture(&texture);
     }
 
@@ -51,6 +54,28 @@ public:
         if (!_canJump && _jumpClock.getElapsedTime() > _jumpCooldown)
         {
             _canJump = true;
+        }
+
+        if (!_canJump)
+        {
+            if (clock.getElapsedTime().asSeconds() > 0.0375f)
+            {
+                if (birdTextRect.left == 48)
+                {
+                    birdTextRect.left = 0;
+                }
+                else
+                {
+                    birdTextRect.left += 16;
+                }
+                clock.restart();
+            }
+            bird.setTextureRect(birdTextRect);
+        }
+        else
+        {
+            birdTextRect = sf::IntRect(0, 0, 16, 16);
+            bird.setTextureRect(birdTextRect);
         }
 
         _rotate = _velocity / 600.f;
@@ -109,6 +134,7 @@ public:
 private:
     sf::RectangleShape bird;
     sf::Texture texture;
+    sf::IntRect birdTextRect;
 
     float _gravity;
     float _jump;
@@ -116,6 +142,7 @@ private:
     float _terminalVelocity;
     float _rotate;
 
+    sf::Clock clock;
     sf::Clock _jumpClock;
     sf::Time _jumpCooldown;
     bool _canJump;
