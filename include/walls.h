@@ -24,7 +24,6 @@ public:
         }
 
         wall.setTexture(&texture);
-        //
     }
 
     void update(sf::Time& deltaTime)

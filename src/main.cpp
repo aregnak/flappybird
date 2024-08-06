@@ -1,3 +1,5 @@
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -6,6 +8,7 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Audio.hpp>
 #include <algorithm>
 #include <vector>
 #include <iostream>
@@ -50,7 +53,8 @@ int main()
     float wallX = 0;
     int score = 0;
     bool isPassed = false;
-    bool isHit = false;
+    bool isDead = false;
+    bool hitWall = false;
     float currentTime = 0;
 
     sf::Font font;
@@ -100,7 +104,7 @@ int main()
 
     sf::Text pausedText;
     pausedText.setFont(font);
-    pausedText.setString("Flappy Bird\nPress Space to start");
+    pausedText.setString("Game Paused\nPress Escape or P");
     pausedText.setCharacterSize(50);
     pausedText.setFillColor(sf::Color::White);
     pausedText.setStyle(sf::Text::Bold);
@@ -116,6 +120,11 @@ int main()
     scoreText.setPosition(10, 10);
     scoreText.setOutlineColor(sf::Color::Black);
     scoreText.setOutlineThickness(5.f);
+
+    sf::SoundBuffer pointBuffer;
+    pointBuffer.loadFromFile("res/sound/sfx_point.wav");
+
+    sf::Sound pointSound(pointBuffer);
 
     while (window.isOpen())
     {
@@ -133,7 +142,8 @@ int main()
                 if (gameOver && event.key.code == sf::Keyboard::Space)
                 {
                     gameOver = false;
-                    isHit = false;
+                    isDead = false;
+                    hitWall = false;
                     score = 0;
                     bird.reset();
                     walls.clear();
@@ -162,7 +172,7 @@ int main()
                     continue;
                 }
 
-                else if (!gameOver && !mainMenu && !gamePaused)
+                else if (!gameOver && !mainMenu && !gamePaused && !hitWall)
                 {
                     bird.handleEvent(event);
                 }
@@ -191,15 +201,16 @@ int main()
                 if (wall.collision(bird.getShape()))
                 {
                     bird.deathAnimation();
+                    hitWall = true;
 
-                    if (!isHit)
+                    if (!isDead)
                     {
-                        isHit = true;
+                        isDead = true;
 
                         currentTime = gameTimer.getElapsedTime().asSeconds();
                     }
                 }
-                if (isHit)
+                if (isDead)
                 {
                     if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.3)
                     {
@@ -207,9 +218,10 @@ int main()
                     }
                 }
 
-                if (!isPassed && wall.getX() < bird.getPos().x &&
+                if (!isPassed && !hitWall && wall.getX() < bird.getPos().x &&
                     wall.getX() > bird.getPos().x - 20)
                 {
+                    pointSound.play();
                     isPassed = true;
                     score++;
                 }
@@ -233,9 +245,9 @@ int main()
             if (playerPos.y >= window.getSize().y - 50)
             {
                 bird.deathAnimation();
-                if (!isHit)
+                if (!isDead)
                 {
-                    isHit = true;
+                    isDead = true;
 
                     currentTime = gameTimer.getElapsedTime().asSeconds();
                 }

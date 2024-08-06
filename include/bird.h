@@ -1,9 +1,12 @@
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 
 class Bird
@@ -31,6 +34,9 @@ public:
         birdTextRect = sf::IntRect(0, 0, 16, 16);
         bird.setTextureRect(birdTextRect);
         bird.setTexture(&texture);
+
+        jumpBuffer.loadFromFile("res/sound/sfx_wing.wav");
+        jumpSound.setBuffer(jumpBuffer);
     }
 
     void handleEvent(const sf::Event& event)
@@ -38,6 +44,7 @@ public:
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space &&
             _canJump)
         {
+            jumpSound.play();
             _velocity = _jump;
             _canJump = false;
             _jumpClock.restart();
@@ -139,6 +146,9 @@ private:
     sf::RectangleShape bird;
     sf::Texture texture;
     sf::IntRect birdTextRect;
+
+    sf::SoundBuffer jumpBuffer;
+    sf::Sound jumpSound;
 
     float _gravity;
     float _jump;
