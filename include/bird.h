@@ -14,6 +14,7 @@ public:
         , _terminalVelocity(600.f)
         , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
+        , _rotate(0.f)
     {
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
@@ -42,10 +43,17 @@ public:
 
     void update(sf::Time deltaTime)
     {
+        if (deltaTime == sf::Time::Zero)
+        {
+            return;
+        }
+
         if (!_canJump && _jumpClock.getElapsedTime() > _jumpCooldown)
         {
             _canJump = true;
         }
+
+        _rotate = _velocity / 600.f;
 
         _velocity += _gravity * deltaTime.asSeconds();
 
@@ -55,12 +63,13 @@ public:
         }
 
         bird.move(0, _velocity * deltaTime.asSeconds());
-        bird.rotate(_velocity / 300);
+        bird.rotate(_rotate);
     }
 
     void reset()
     {
         _velocity = 0.f;
+        _rotate = 0.f;
         _canJump = true;
         bird.setPosition(sf::Vector2f(100, 300));
         bird.setRotation(0);
@@ -81,6 +90,22 @@ public:
         return bird; //
     }
 
+    void deathAnimation()
+    {
+        bird.rotate(-15);
+
+        constexpr float gravityEffect = 0.001;
+        for (int i = 0; i < 5; ++i)
+        {
+            sf::Vector2f movement(i, gravityEffect * i * i);
+            // Add boundary checks here to ensure bird stays within game area
+            if (bird.getPosition().x - movement.x >= 0 && bird.getPosition().y + movement.y >= 0)
+            {
+                bird.move(-movement.x, movement.y);
+            }
+        }
+    }
+
 private:
     sf::RectangleShape bird;
     sf::Texture texture;
@@ -89,6 +114,7 @@ private:
     float _jump;
     float _velocity;
     float _terminalVelocity;
+    float _rotate;
 
     sf::Clock _jumpClock;
     sf::Time _jumpCooldown;

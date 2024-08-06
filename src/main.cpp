@@ -3,8 +3,10 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 #include <algorithm>
+#include <exception>
 #include <vector>
 #include <iostream>
 #include <cstdlib>
@@ -27,15 +29,16 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
 
 int main()
 {
+    srand(static_cast<unsigned>(time(0)));
+
     sf::RenderWindow window(sf::VideoMode(800, 800), "Flappy Bird", sf::Style::Default,
                             sf::ContextSettings(0, 0, 8));
 
     window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
 
-    srand(static_cast<unsigned>(time(0)));
-
     sf::Clock timer;
+    sf::Clock gameTimer;
 
     Bird bird(35, 35);
     std::vector<Wall> walls;
@@ -44,6 +47,8 @@ int main()
     float wallX = 0;
     int score = 0;
     bool isPassed = false;
+    bool isHit = false;
+    float currentTime = 0;
 
     sf::Font font;
     if (!font.loadFromFile("res/font/Neon.ttf"))
@@ -103,10 +108,12 @@ int main()
                 if (gameOver && event.key.code == sf::Keyboard::Enter)
                 {
                     gameOver = false;
+                    isHit = false;
+                    score = 0;
                     bird.reset();
                     walls.clear();
                     walls.push_back(Wall(60, window.getSize().y));
-                    score = 0;
+
                     continue;
                 }
                 else if (!gameOver)
@@ -129,9 +136,6 @@ int main()
 
             window.draw(bg);
 
-            bird.update(deltaTime);
-            bird.drawTo(window);
-
             for (Wall& wall : walls)
             {
                 wallX = wall.getX();
@@ -140,10 +144,26 @@ int main()
 
                 if (wall.collision(bird.getShape()))
                 {
-                    // gameOver = true;
+                    bird.deathAnimation();
+
+                    if (!isHit)
+                    {
+                        isHit = true;
+
+                        currentTime = gameTimer.getElapsedTime().asSeconds();
+                    }
+
+                    std::cout << gameTimer.getElapsedTime().asSeconds() - currentTime << std::endl;
+                }
+                if (isHit)
+                {
+                    if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.3)
+                    {
+                        std::cout << currentTime << std::endl;
+                        gameOver = true;
+                    }
                 }
 
-                // Check if the bird has passed the wall
                 if (!isPassed && wall.getX() < bird.getPos().x &&
                     wall.getX() > bird.getPos().x - 20)
                 {
@@ -158,6 +178,9 @@ int main()
             }
             spawnWalls(window, walls, wallX);
 
+            bird.update(deltaTime);
+            bird.drawTo(window);
+
             walls.erase(std::remove_if(walls.begin(), walls.end(),
                                        [](const Wall& wall) { return wall.getX() < -80; }),
                         walls.end());
@@ -166,12 +189,17 @@ int main()
 
             if (playerPos.y >= window.getSize().y - 50)
             {
-                gameOver = true;
+                bird.deathAnimation();
+                if (!isHit)
+                {
+                    isHit = true;
+
+                    currentTime = gameTimer.getElapsedTime().asSeconds();
+                }
             }
 
             scoreText.setString("Score  " + std::to_string(score));
             window.draw(scoreText);
-            std::cout << isPassed << std::endl;
 
             window.display();
         }
