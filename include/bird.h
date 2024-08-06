@@ -23,7 +23,7 @@ public:
         bird.setPosition(100, 300);
         bird.setRotation(0);
 
-        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-6.png"))
+        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-1.png"))
         {
             std::cout << "failed to load bird texture" << std::endl;
             system("pause");
@@ -51,13 +51,13 @@ public:
             return;
         }
 
-        if (!_canJump && _jumpClock.getElapsedTime() > _jumpCooldown)
-        {
-            _canJump = true;
-        }
-
         if (!_canJump)
         {
+            if (_jumpClock.getElapsedTime() > _jumpCooldown)
+            {
+                _canJump = true;
+            }
+
             if (clock.getElapsedTime().asSeconds() > 0.0375f)
             {
                 if (birdTextRect.left == 48)
@@ -78,7 +78,12 @@ public:
             bird.setTextureRect(birdTextRect);
         }
 
-        _rotate = _velocity / 600.f;
+        if (bird.getPosition().y < 10)
+        {
+            bird.setPosition(bird.getPosition().x, 10);
+        }
+
+        _rotate = _velocity / 10;
 
         _velocity += _gravity * deltaTime.asSeconds();
 
@@ -88,7 +93,7 @@ public:
         }
 
         bird.move(0, _velocity * deltaTime.asSeconds());
-        bird.rotate(_rotate);
+        bird.rotate(_rotate * deltaTime.asSeconds());
     }
 
     void reset()
@@ -123,7 +128,6 @@ public:
         for (int i = 0; i < 5; ++i)
         {
             sf::Vector2f movement(i, gravityEffect * i * i);
-            // Add boundary checks here to ensure bird stays within game area
             if (bird.getPosition().x - movement.x >= 0 && bird.getPosition().y + movement.y >= 0)
             {
                 bird.move(-movement.x, movement.y);

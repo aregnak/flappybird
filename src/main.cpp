@@ -5,8 +5,8 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <algorithm>
-#include <exception>
 #include <vector>
 #include <iostream>
 #include <cstdlib>
@@ -40,10 +40,12 @@ int main()
     sf::Clock timer;
     sf::Clock gameTimer;
 
-    Bird bird(35, 35);
+    Bird bird(50, 50);
     std::vector<Wall> walls;
 
     bool gameOver = false;
+    bool mainMenu = true;
+
     float wallX = 0;
     int score = 0;
     bool isPassed = false;
@@ -59,7 +61,7 @@ int main()
     font.setSmooth(true);
 
     sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
+    if (!bgTexture.loadFromFile("res/sprite/Background/Background3.png"))
     {
         std::cout << "back ground texture failed" << std::endl;
         system("pause");
@@ -113,10 +115,13 @@ int main()
                     bird.reset();
                     walls.clear();
                     walls.push_back(Wall(60, window.getSize().y));
-
                     continue;
                 }
-                else if (!gameOver)
+
+                // if (mainMenu && event.key.code == sf::Keyboard::Space)
+                // {
+                // }
+                else if (!gameOver) //&& !mainMenu)
                 {
                     bird.handleEvent(event);
                 }
@@ -144,7 +149,7 @@ int main()
 
                 if (wall.collision(bird.getShape()))
                 {
-                    //bird.deathAnimation();
+                    bird.deathAnimation();
 
                     if (!isHit)
                     {
@@ -157,7 +162,7 @@ int main()
                 {
                     if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.3)
                     {
-                        //gameOver = true;
+                        gameOver = true;
                     }
                 }
 
