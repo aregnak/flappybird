@@ -1,6 +1,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -23,8 +24,13 @@ public:
     {
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
-        bird.setPosition(100, 300);
+        bird.setPosition(200, 300);
         bird.setRotation(0);
+
+        hitbox.setRadius((x / 3));
+        hitbox.setOrigin(hitbox.getRadius(), hitbox.getRadius());
+        hitbox.setPosition(bird.getPosition());
+        hitbox.setRotation(bird.getRotation());
 
         if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-2.png"))
         {
@@ -101,6 +107,8 @@ public:
 
         bird.move(0, _velocity * deltaTime.asSeconds());
         bird.rotate(_rotate * deltaTime.asSeconds());
+
+        hitbox.move(0, _velocity * deltaTime.asSeconds());
     }
 
     void reset()
@@ -108,13 +116,16 @@ public:
         _velocity = 0.f;
         _rotate = 0.f;
         _canJump = true;
-        bird.setPosition(sf::Vector2f(100, 300));
+        bird.setPosition(sf::Vector2f(200, 300));
         bird.setRotation(0);
+        hitbox.setPosition(bird.getPosition());
+        hitbox.setRotation(bird.getRotation());
     }
 
     void drawTo(sf::RenderWindow& window)
     {
-        window.draw(bird); //
+        window.draw(bird);
+        //window.draw(hitbox);
     }
 
     sf::Vector2f getPos()
@@ -122,9 +133,9 @@ public:
         return bird.getPosition(); //
     }
 
-    sf::RectangleShape getShape() const
+    sf::CircleShape getShape() const
     {
-        return bird; //
+        return hitbox; //
     }
 
     void deathAnimation()
@@ -138,12 +149,14 @@ public:
             if (bird.getPosition().x - movement.x >= 0 && bird.getPosition().y + movement.y >= 0)
             {
                 bird.move(-movement.x, movement.y);
+                hitbox.move(-movement.x, movement.y);
             }
         }
     }
 
 private:
     sf::RectangleShape bird;
+    sf::CircleShape hitbox;
     sf::Texture texture;
     sf::IntRect birdTextRect;
 

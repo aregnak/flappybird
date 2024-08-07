@@ -10,10 +10,12 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Audio.hpp>
 #include <algorithm>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 #include "bird.h"
 #include "walls.h"
@@ -28,6 +30,29 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
         walls.push_back(Wall(window.getSize().x, wallY));
         walls.push_back(Wall(window.getSize().x, wallY - 880));
     }
+}
+
+void saveHighScore(int highscore)
+{
+    std::ofstream outFile("save/highscore.txt");
+    if (outFile.is_open())
+    {
+        outFile << highscore;
+        outFile.close();
+    }
+}
+
+int loadHighScore()
+{
+    std::ifstream inFile("save/highscore.txt"); //
+    int highscore = 0;
+    if (inFile.is_open())
+    {
+        inFile >> highscore;
+        inFile.close();
+    }
+
+    return highscore;
 }
 
 int main()
@@ -52,6 +77,8 @@ int main()
 
     float wallX = 0;
     int score = 0;
+    int highscore = loadHighScore();
+
     bool isPassed = false;
     bool isDead = false;
     bool hitWall = false;
@@ -121,10 +148,25 @@ int main()
     scoreText.setOutlineColor(sf::Color::Black);
     scoreText.setOutlineThickness(5.f);
 
+    sf::Text highscoreText;
+    highscoreText.setFont(font);
+    highscoreText.setCharacterSize(30);
+    highscoreText.setFillColor(sf::Color::White);
+    highscoreText.setPosition(10, 50);
+    highscoreText.setOutlineColor(sf::Color::Black);
+    highscoreText.setOutlineThickness(5.f);
+
     sf::SoundBuffer pointBuffer;
     pointBuffer.loadFromFile("res/sound/sfx_point.wav");
-
     sf::Sound pointSound(pointBuffer);
+
+    sf::SoundBuffer hitBuffer;
+    hitBuffer.loadFromFile("res/sound/sfx_hit.wav");
+    sf::Sound hitSound(hitBuffer);
+
+    sf::SoundBuffer dieBuffer;
+    dieBuffer.loadFromFile("res/sound/sfx_die.wav");
+    sf::Sound dieSound(dieBuffer);
 
     while (window.isOpen())
     {
@@ -206,6 +248,7 @@ int main()
                     if (!isDead)
                     {
                         isDead = true;
+                        hitSound.play();
 
                         currentTime = gameTimer.getElapsedTime().asSeconds();
                     }
@@ -256,12 +299,22 @@ int main()
             scoreText.setString("Score  " + std::to_string(score));
             window.draw(scoreText);
 
+            highscoreText.setString("High Score  " + std::to_string(highscore));
+
+            window.draw(highscoreText);
+
             window.display();
         }
         else if (gameOver && !mainMenu)
         {
             window.draw(bg);
             window.draw(gameOverText);
+
+            if (score > highscore)
+            {
+                highscore = score;
+                saveHighScore(highscore);
+            }
 
             window.display();
         }
