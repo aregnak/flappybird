@@ -94,9 +94,10 @@ public:
         if (bird.getPosition().y < 10)
         {
             bird.setPosition(bird.getPosition().x, 10);
+            hitbox.setPosition(bird.getPosition());
         }
 
-        _rotate = _velocity / 10;
+        _rotate = _velocity / 2.5f;
 
         _velocity += _gravity * deltaTime.asSeconds();
 
@@ -105,10 +106,20 @@ public:
             _velocity = _terminalVelocity;
         }
 
-        bird.move(0, _velocity * deltaTime.asSeconds());
-        bird.rotate(_rotate * deltaTime.asSeconds());
+        if (bird.getRotation() < 320 && bird.getRotation() > 290)
+        {
+            bird.setRotation(320);
+        }
+
+        if (bird.getRotation() > 40 && bird.getRotation() < 90)
+        {
+            bird.setRotation(40);
+        }
 
         hitbox.move(0, _velocity * deltaTime.asSeconds());
+
+        bird.move(0, _velocity * deltaTime.asSeconds());
+        bird.rotate(_rotate * deltaTime.asSeconds());
     }
 
     void reset()
@@ -125,7 +136,7 @@ public:
     void drawTo(sf::RenderWindow& window)
     {
         window.draw(bird);
-        //window.draw(hitbox);
+        // window.draw(hitbox);
     }
 
     sf::Vector2f getPos()

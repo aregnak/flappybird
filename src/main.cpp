@@ -82,6 +82,7 @@ int main()
     bool isPassed = false;
     bool isDead = false;
     bool hitWall = false;
+    bool stupid = false;
     float currentTime = 0;
 
     sf::Font font;
@@ -93,7 +94,7 @@ int main()
     font.setSmooth(true);
 
     sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("res/sprite/Background/Background8.png"))
+    if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
     {
         std::cout << "back ground texture failed" << std::endl;
         system("pause");
@@ -159,14 +160,22 @@ int main()
     sf::SoundBuffer pointBuffer;
     pointBuffer.loadFromFile("res/sound/sfx_point.wav");
     sf::Sound pointSound(pointBuffer);
+    pointSound.setVolume(40.f);
+
+    sf::SoundBuffer passBuffer;
+    passBuffer.loadFromFile("res/sound/sfx_swooshing.wav");
+    sf::Sound passSound(passBuffer);
+    passSound.setVolume(100.f);
 
     sf::SoundBuffer hitBuffer;
     hitBuffer.loadFromFile("res/sound/sfx_hit.wav");
     sf::Sound hitSound(hitBuffer);
+    hitSound.setVolume(60.f);
 
     sf::SoundBuffer dieBuffer;
     dieBuffer.loadFromFile("res/sound/sfx_die.wav");
     sf::Sound dieSound(dieBuffer);
+    dieSound.setVolume(40.f);
 
     while (window.isOpen())
     {
@@ -186,6 +195,7 @@ int main()
                     gameOver = false;
                     isDead = false;
                     hitWall = false;
+                    stupid = false;
                     score = 0;
                     bird.reset();
                     walls.clear();
@@ -249,24 +259,40 @@ int main()
                     {
                         isDead = true;
                         hitSound.play();
-
                         currentTime = gameTimer.getElapsedTime().asSeconds();
                     }
                 }
                 if (isDead)
                 {
-                    if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.3)
+                    if (!stupid)
+                    {
+                        if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.25)
+                        {
+                            dieSound.play();
+                            stupid = true;
+                        }
+                    }
+
+                    if (gameTimer.getElapsedTime().asSeconds() - currentTime > 1)
                     {
                         gameOver = true;
                     }
+                }
+                if (hitWall)
+                {
                 }
 
                 if (!isPassed && !hitWall && wall.getX() < bird.getPos().x &&
                     wall.getX() > bird.getPos().x - 20)
                 {
-                    pointSound.play();
+                    passSound.play();
                     isPassed = true;
                     score++;
+
+                    if (score % 10 == 0)
+                    {
+                        pointSound.play();
+                    }
                 }
 
                 if (wall.getX() < -80)
@@ -291,6 +317,7 @@ int main()
                 if (!isDead)
                 {
                     isDead = true;
+                    hitSound.play();
 
                     currentTime = gameTimer.getElapsedTime().asSeconds();
                 }
