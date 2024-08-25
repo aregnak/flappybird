@@ -22,6 +22,8 @@
 
 sf::Texture Wall::texture;
 
+#define screen_width 500
+
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
     if (wallX < window.getSize().x / 2.f)
@@ -59,7 +61,7 @@ int main()
 {
     srand(static_cast<unsigned>(time(0)));
 
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Flappy Bird", sf::Style::Default,
+    sf::RenderWindow window(sf::VideoMode(screen_width, 800), "Flappy Bird", sf::Style::Default,
                             sf::ContextSettings(0, 0, 8));
 
     window.setFramerateLimit(60);
@@ -237,7 +239,7 @@ int main()
         {
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
             bg.move(-moveDistance, 0);
-            if (bg.getPosition().x <= -800)
+            if (bg.getPosition().x <= -screen_width)
             {
                 bg.setPosition(0, 0);
             }

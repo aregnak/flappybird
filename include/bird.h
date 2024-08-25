@@ -136,7 +136,7 @@ public:
     void drawTo(sf::RenderWindow& window)
     {
         window.draw(bird);
-        // window.draw(hitbox);
+        //window.draw(hitbox);
     }
 
     sf::Vector2f getPos()
