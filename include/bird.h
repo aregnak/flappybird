@@ -23,7 +23,7 @@ public:
         , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
         , _rotate(0.f)
-        , birdtexrectTop(0.f)
+        , _birdtexrectTop(0.f)
     {
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
@@ -61,13 +61,13 @@ public:
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G)
         {
-            if (birdtexrectTop <= 80)
+            if (_birdtexrectTop <= 80)
             {
-                birdtexrectTop += 16;
+                _birdtexrectTop += 16;
             }
             else
             {
-                birdtexrectTop = 0;
+                _birdtexrectTop = 0;
             }
         }
     }
@@ -102,7 +102,7 @@ public:
         }
         else
         {
-            birdTextRect = sf::IntRect(0, birdtexrectTop, 16, 16);
+            birdTextRect = sf::IntRect(0, _birdtexrectTop, 16, 16);
             bird.setTextureRect(birdTextRect);
         }
 
@@ -194,8 +194,7 @@ private:
     float _velocity;
     float _terminalVelocity;
     float _rotate;
-
-    float birdtexrectTop;
+    float _birdtexrectTop;
 
     sf::Clock clock;
     sf::Clock _jumpClock;

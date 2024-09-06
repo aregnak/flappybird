@@ -29,7 +29,8 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
 {
     if (wallX < window.getSize().x / 2.f)
     {
-        float wallY = (rand() % (600 - 200 + 1) + 200);
+        float wallY =
+            (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
         walls.push_back(Wall(window.getSize().x, wallY));
         walls.push_back(Wall(window.getSize().x, wallY - 880));
     }
@@ -111,6 +112,7 @@ int main()
 
     const float bgScrollSpeed = 100.f;
 
+    // game texts
     sf::Text gameOverText;
     gameOverText.setFont(font);
     gameOverText.setString("Game Over!\nPress Space to Restart");
@@ -160,6 +162,7 @@ int main()
     highscoreText.setOutlineColor(sf::Color::Black);
     highscoreText.setOutlineThickness(5.f);
 
+    //game sounds
     sf::SoundBuffer pointBuffer;
     pointBuffer.loadFromFile("res/sound/sfx_point.wav");
     sf::Sound pointSound(pointBuffer);
@@ -195,6 +198,7 @@ int main()
             {
                 if (gameOver && event.key.code == sf::Keyboard::Space)
                 {
+                    // reset game after death
                     gameOver = false;
                     isDead = false;
                     hitWall = false;
@@ -206,6 +210,7 @@ int main()
                     continue;
                 }
 
+                // menus
                 if (mainMenu && event.key.code == sf::Keyboard::Space)
                 {
                     mainMenu = false;
@@ -238,16 +243,17 @@ int main()
 
         if (!gameOver && !mainMenu && !gamePaused)
         {
+            // background scrolling effect
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
             bg.move(-moveDistance, 0);
             if (bg.getPosition().x <= -screen_width)
             {
                 bg.setPosition(0, 0);
             }
-            std::cout << bg.getPosition().x << std::endl;
 
             window.draw(bg);
 
+            // create walls
             for (Wall& wall : walls)
             {
                 wallX = wall.getX();
@@ -281,9 +287,6 @@ int main()
                     {
                         gameOver = true;
                     }
-                }
-                if (hitWall)
-                {
                 }
 
                 if (!isPassed && !hitWall && wall.getX() < bird.getPos().x &&
