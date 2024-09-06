@@ -20,9 +20,10 @@
 #include "bird.h"
 #include "walls.h"
 
-sf::Texture Wall::texture;
+#define screen_width 800
+#define screen_height 800
 
-#define screen_width 500
+sf::Texture Wall::texture;
 
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
@@ -61,8 +62,8 @@ int main()
 {
     srand(static_cast<unsigned>(time(0)));
 
-    sf::RenderWindow window(sf::VideoMode(screen_width, 800), "Flappy Bird", sf::Style::Default,
-                            sf::ContextSettings(0, 0, 8));
+    sf::RenderWindow window(sf::VideoMode(screen_width, screen_height), "Flappy Bird",
+                            sf::Style::Default, sf::ContextSettings(0, 0, 8));
 
     window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
@@ -113,7 +114,7 @@ int main()
     sf::Text gameOverText;
     gameOverText.setFont(font);
     gameOverText.setString("Game Over!\nPress Space to Restart");
-    gameOverText.setCharacterSize(50);
+    gameOverText.setCharacterSize(40);
     gameOverText.setFillColor(sf::Color::White);
     gameOverText.setStyle(sf::Text::Bold);
     gameOverText.setPosition(window.getSize().x / 2.f - gameOverText.getLocalBounds().width / 2,
@@ -124,7 +125,7 @@ int main()
     sf::Text mainMenuText;
     mainMenuText.setFont(font);
     mainMenuText.setString("Flappy Bird\nPress Space to start");
-    mainMenuText.setCharacterSize(50);
+    mainMenuText.setCharacterSize(40);
     mainMenuText.setFillColor(sf::Color::White);
     mainMenuText.setStyle(sf::Text::Bold);
     mainMenuText.setPosition(window.getSize().x / 2.f - mainMenuText.getLocalBounds().width / 2,
@@ -135,7 +136,7 @@ int main()
     sf::Text pausedText;
     pausedText.setFont(font);
     pausedText.setString("Game Paused\nPress Escape or P");
-    pausedText.setCharacterSize(50);
+    pausedText.setCharacterSize(40);
     pausedText.setFillColor(sf::Color::White);
     pausedText.setStyle(sf::Text::Bold);
     pausedText.setPosition(window.getSize().x / 2.f - mainMenuText.getLocalBounds().width / 2,
@@ -243,6 +244,7 @@ int main()
             {
                 bg.setPosition(0, 0);
             }
+            std::cout << bg.getPosition().x << std::endl;
 
             window.draw(bg);
 

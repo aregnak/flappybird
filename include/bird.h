@@ -8,6 +8,8 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <iostream>
 
 class Bird
@@ -21,6 +23,7 @@ public:
         , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
         , _rotate(0.f)
+        , birdtexrectTop(0.f)
     {
         bird.setSize(sf::Vector2f(x, y));
         bird.setOrigin(x / 2, y / 2);
@@ -32,7 +35,7 @@ public:
         hitbox.setPosition(bird.getPosition());
         hitbox.setRotation(bird.getRotation());
 
-        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/Bird1-2.png"))
+        if (!texture.loadFromFile("res/sprite/Player/StyleBird1/AllBird1.png"))
         {
             std::cout << "failed to load bird texture" << std::endl;
             system("pause");
@@ -54,6 +57,18 @@ public:
             _velocity = _jump;
             _canJump = false;
             _jumpClock.restart();
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G)
+        {
+            if (birdtexrectTop <= 80)
+            {
+                birdtexrectTop += 16;
+            }
+            else
+            {
+                birdtexrectTop = 0;
+            }
         }
     }
 
@@ -87,7 +102,7 @@ public:
         }
         else
         {
-            birdTextRect = sf::IntRect(0, 0, 16, 16);
+            birdTextRect = sf::IntRect(0, birdtexrectTop, 16, 16);
             bird.setTextureRect(birdTextRect);
         }
 
@@ -179,6 +194,8 @@ private:
     float _velocity;
     float _terminalVelocity;
     float _rotate;
+
+    float birdtexrectTop;
 
     sf::Clock clock;
     sf::Clock _jumpClock;
