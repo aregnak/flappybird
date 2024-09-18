@@ -95,7 +95,6 @@ int main()
         std::cerr << "Could not load font" << std::endl;
         return 1;
     }
-    font.setSmooth(true);
 
     sf::Texture bgTexture;
     if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
