@@ -1,9 +1,6 @@
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
@@ -20,6 +17,7 @@
 
 #include "bird.h"
 #include "walls.h"
+#include "extras.h"
 
 #define screen_width 800
 #define screen_height 800
@@ -67,15 +65,22 @@ int main()
     sf::RenderWindow window(sf::VideoMode({screen_width, screen_height}), "Flappy Bird");
                             //sf::Style::Default, sf::ContextSettings({0}, {0}, {8}));
 
-    window.setFramerateLimit(60);
+    // window.setFramerateLimit(75);
+    window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
 
     sf::Clock timer;
     sf::Clock gameTimer;
 
+    // creating bird object
     Bird bird(45, 45);
+    bird.reset();
+
+    // creating walls vector, all the walls are managed here
     std::vector<Wall> walls;
 
+
+    // game variable inits
     bool gameOver = false;
     bool mainMenu = true;
     bool gamePaused = false;
@@ -94,8 +99,21 @@ int main()
     if (!font.openFromFile("res/font/Neon.ttf"))
     {
         std::cerr << "Could not load font" << std::endl;
-        return 1;
     }
+    
+    // initialize game texts and sounds
+    sf::Text gameOverText = createGameOverText(font, window);
+    sf::Text mainMenuText = createMainMenuText(font, window);
+    sf::Text pausedText = createPausedText(font, window);
+    sf::Text scoreText = createScoreText(font, window);
+    sf::Text highscoreText = createHighscoreText(font, window);
+
+    sf::Sound pointSound = createPointSound();
+    sf::Sound passSound = createPassSound();
+    sf::Sound hitSound = createHitSound();
+    sf::Sound dieSound = createDieSound();
+    sf::Sound jumpSound = createJumpSound();
+    
 
     sf::Texture bgTexture;
     if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
@@ -111,65 +129,6 @@ int main()
     bg.setScale({window.getSize().x / 256.f, window.getSize().y / 256.f});
 
     const float bgScrollSpeed = 100.f;
-
-    // game texts
-    sf::Text gameOverText(font, "Game Over!\nPress Space to Restart");
-    gameOverText.setCharacterSize(40);
-    gameOverText.setFillColor(sf::Color::White);
-    gameOverText.setStyle(sf::Text::Bold);
-    gameOverText.setPosition({window.getSize().x / 2.f - gameOverText.getLocalBounds().size.x / 2,
-                             window.getSize().y / 2.f - gameOverText.getLocalBounds().size.y / 2});
-    gameOverText.setOutlineColor(sf::Color::Black);
-    gameOverText.setOutlineThickness(5.f);
-
-    sf::Text mainMenuText(font, "Flappy Bird\nPress Space to start");
-    mainMenuText.setCharacterSize(40);
-    mainMenuText.setFillColor(sf::Color::White);
-    mainMenuText.setStyle(sf::Text::Bold);
-    mainMenuText.setPosition({window.getSize().x / 2.f - mainMenuText.getLocalBounds().size.x / 2,
-                             window.getSize().y / 2.f - mainMenuText.getLocalBounds().size.y / 2});
-    mainMenuText.setOutlineColor(sf::Color::Black);
-    mainMenuText.setOutlineThickness(5.f);
-
-    sf::Text pausedText(font, "Game Paused\nPress Escape or P");
-    pausedText.setCharacterSize(40);
-    pausedText.setFillColor(sf::Color::White);
-    pausedText.setStyle(sf::Text::Bold);
-    pausedText.setPosition({window.getSize().x / 2.f - pausedText.getLocalBounds().size.x / 2,
-                           window.getSize().y / 2.f - pausedText.getLocalBounds().size.y/ 2});
-    pausedText.setOutlineColor(sf::Color::Black);
-    pausedText.setOutlineThickness(5.f);
-
-    sf::Text scoreText(font, "");
-    scoreText.setCharacterSize(30);
-    scoreText.setFillColor(sf::Color::White);
-    scoreText.setPosition({10, 10});
-    scoreText.setOutlineColor(sf::Color::Black);
-    scoreText.setOutlineThickness(5.f);
-
-    sf::Text highscoreText(font, "");
-    highscoreText.setCharacterSize(30);
-    highscoreText.setFillColor(sf::Color::White);
-    highscoreText.setPosition({10, 50});
-    highscoreText.setOutlineColor(sf::Color::Black);
-    highscoreText.setOutlineThickness(5.f);
-
-    //game sounds
-    sf::SoundBuffer pointBuffer("res/sound/sfx_point.wav");
-    sf::Sound pointSound(pointBuffer);
-    pointSound.setVolume(40.f);
-
-    sf::SoundBuffer passBuffer("res/sound/sfx_swooshing.wav");
-    sf::Sound passSound(passBuffer);
-    passSound.setVolume(100.f);
-
-    sf::SoundBuffer hitBuffer("res/sound/sfx_hit.wav");
-    sf::Sound hitSound(hitBuffer);
-    hitSound.setVolume(60.f);
-
-    sf::SoundBuffer dieBuffer("res/sound/sfx_die.wav");
-    sf::Sound dieSound(dieBuffer);
-    dieSound.setVolume(40.f);
 
     while (window.isOpen())
     {
@@ -203,7 +162,8 @@ int main()
                     mainMenu = false;
                     continue;
                 }
-
+                
+                // unpause the game with either esc or P
                 if (!gamePaused && !mainMenu && !gameOver &&
                         keyDown->scancode == sf::Keyboard::Scancode::Escape ||
                     !gamePaused && !mainMenu && !gameOver && keyDown->scancode == sf::Keyboard::Scancode::P)
@@ -211,6 +171,7 @@ int main()
                     gamePaused = true;
                     continue;
                 }
+                // unpause the game with either esc or P
                 else if (gamePaused && !mainMenu && !gameOver &&
                              keyDown->scancode == sf::Keyboard::Scancode::Escape ||
                          gamePaused && !mainMenu && !gameOver && keyDown->scancode == sf::Keyboard::Scancode::P)
@@ -219,9 +180,10 @@ int main()
                     continue;
                 }
 
+                // handleEvent directly receives the key instead of checking again with event in in bird.h
                 else if (!gameOver && !mainMenu && !gamePaused && !hitWall)
                 {
-                    bird.handleEvent(keyDown);
+                    bird.handleEvent(keyDown, jumpSound);
                 }
             }
         }

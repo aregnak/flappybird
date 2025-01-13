@@ -6,8 +6,17 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Texture.hpp>
+
 #include <iostream>
 
+
+/*-------------------------
+This class creates the walls, adds the texture, and moves the walls horizontally.
+
+Position is decided when creating the object, size and speed decided in here.
+
+
+---------------------------*/
 class Wall
 {
 public:
@@ -38,14 +47,11 @@ public:
     {
         return wall.getPosition().x; //
     }
-
-    void drawTo(sf::RenderWindow& window)
-    {
-        window.draw(wall); //
-    }
-
+   
+    // check for collision with an item, can be anything but is used with bird hitbox
     bool collision(const sf::Shape& item) const
     {
+        // new way of doing it with std::optional in SFML 3.0
         std::optional<sf::FloatRect> checkCollision = wall.getGlobalBounds().findIntersection(item.getGlobalBounds());
         
         if (!checkCollision)
@@ -53,6 +59,11 @@ public:
             return false;
         }
         return true;
+    }
+
+    void drawTo(sf::RenderWindow& window)
+    {
+        window.draw(wall); //
     }
 
 private:
