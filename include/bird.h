@@ -23,53 +23,63 @@ public:
         , _jumpCooldown(sf::seconds(0.1f))
         , _canJump(true)
         , _rotate(0.f)
-        , _birdtexrectTop(0.f)
+        , _birdtexrectTop(0)
     {
+        // bird player init
         bird.setSize(sf::Vector2f(x, y));
-        bird.setOrigin(x / 2, y / 2);
-        bird.setPosition(200, 300);
-        bird.setRotation(0);
+        bird.setOrigin({x / 2, y / 2});
+        bird.setPosition({200, 300});
+        bird.setRotation(sf::degrees(90));
 
+        // hitbox init
         hitbox.setRadius((x / 3));
-        hitbox.setOrigin(hitbox.getRadius(), hitbox.getRadius());
+        hitbox.setOrigin({hitbox.getRadius(), hitbox.getRadius()});
         hitbox.setPosition(bird.getPosition());
-        hitbox.setRotation(bird.getRotation());
+        hitbox.setRotation(sf::degrees(bird.getRotation().asDegrees()));
 
+        // bird texture with animation, basically the spritesheet.
         if (!texture.loadFromFile("res/sprite/Player/StyleBird1/AllBird1.png"))
         {
             std::cout << "failed to load bird texture" << std::endl;
             system("pause");
         }
-        birdTextRect = sf::IntRect(0, 0, 16, 16);
+        birdTextRect = sf::IntRect({0, 0}, {16, 16});
         bird.setTextureRect(birdTextRect);
         bird.setTexture(&texture);
 
-        jumpBuffer.loadFromFile("res/sound/sfx_wing.wav");
-        jumpSound.setBuffer(jumpBuffer);
+        if (!jumpBuffer.loadFromFile("res/sound/sfx_wing.wav"))
+        {
+            std::cerr << "didnt load jump sound" << std::endl;
+        }
+        jumpSound.setBuffer(jumpBuffer);  // Set the buffer to jumpSound
     }
 
-    void handleEvent(const sf::Event& event)
+    void handleEvent(const auto* keyDown)
     {
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space &&
+        // because of sf::Event changes, the getIf needs to be true, then check for space key
+        //if (const auto* keyDown = event.getIf<sf::Event::KeyPressed>())
+        {    
+            if (keyDown->scancode == sf::Keyboard::Scancode::Space &&
             _canJump)
-        {
-            jumpSound.play();
-            _velocity = _jump;
-            _canJump = false;
-            _jumpClock.restart();
+            {
+                jumpSound.play();
+                _velocity = _jump;
+                _canJump = false;
+                _jumpClock.restart();
+            }
+        if (keyDown->scancode == sf::Keyboard::Scancode::G)
+            {
+                if (_birdtexrectTop <= 80)
+                {
+                    _birdtexrectTop += 16;
+                }
+                else
+                {
+                    _birdtexrectTop = 0;
+                }
+            }
         }
 
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G)
-        {
-            if (_birdtexrectTop <= 80)
-            {
-                _birdtexrectTop += 16;
-            }
-            else
-            {
-                _birdtexrectTop = 0;
-            }
-        }
     }
 
     void update(sf::Time deltaTime)
@@ -88,13 +98,13 @@ public:
 
             if (clock.getElapsedTime().asSeconds() > 0.025f)
             {
-                if (birdTextRect.left == 48)
+                if (birdTextRect.position == sf::Vector2i(48, 0))
                 {
-                    birdTextRect.left = 0;
+                    birdTextRect.position = sf::Vector2i(0, 0);
                 }
                 else
                 {
-                    birdTextRect.left += 16;
+                    birdTextRect.position += sf::Vector2i(16, 0);
                 }
                 clock.restart();
             }
@@ -102,13 +112,13 @@ public:
         }
         else
         {
-            birdTextRect = sf::IntRect(0, _birdtexrectTop, 16, 16);
+            birdTextRect = sf::IntRect({0, _birdtexrectTop}, {16, 16});
             bird.setTextureRect(birdTextRect);
         }
 
         if (bird.getPosition().y < 10)
         {
-            bird.setPosition(bird.getPosition().x, 10);
+            bird.setPosition({bird.getPosition().x, 10});
             hitbox.setPosition(bird.getPosition());
         }
 
@@ -121,20 +131,20 @@ public:
             _velocity = _terminalVelocity;
         }
 
-        if (bird.getRotation() < 320 && bird.getRotation() > 290)
+        if (bird.getRotation() < sf::degrees(320) && bird.getRotation() > sf::degrees(290))
         {
-            bird.setRotation(320);
+            bird.setRotation(sf::degrees(320));
         }
 
-        if (bird.getRotation() > 40 && bird.getRotation() < 90)
+        if (bird.getRotation() > sf::degrees(40) && bird.getRotation() < sf::degrees(90))
         {
-            bird.setRotation(40);
+            bird.setRotation(sf::degrees(40));
         }
 
-        hitbox.move(0, _velocity * deltaTime.asSeconds());
+        hitbox.move({0.f, _velocity * deltaTime.asSeconds()});
 
-        bird.move(0, _velocity * deltaTime.asSeconds());
-        bird.rotate(_rotate * deltaTime.asSeconds());
+        bird.move({0.f, _velocity * deltaTime.asSeconds()});
+        bird.rotate(sf::degrees(_rotate * deltaTime.asSeconds()));
     }
 
     void reset()
@@ -143,9 +153,9 @@ public:
         _rotate = 0.f;
         _canJump = true;
         bird.setPosition(sf::Vector2f(200, 300));
-        bird.setRotation(0);
+        bird.setRotation(sf::degrees(0));
         hitbox.setPosition(bird.getPosition());
-        hitbox.setRotation(bird.getRotation());
+        hitbox.setRotation(sf::degrees(bird.getRotation().asDegrees()));
     }
 
     void drawTo(sf::RenderWindow& window)
@@ -166,7 +176,7 @@ public:
 
     void deathAnimation()
     {
-        bird.rotate(-15);
+        bird.rotate(sf::degrees(-15));
 
         constexpr float gravityEffect = 0.001;
         for (int i = 0; i < 5; ++i)
@@ -174,8 +184,8 @@ public:
             sf::Vector2f movement(i, gravityEffect * i * i);
             if (bird.getPosition().x - movement.x >= 0 && bird.getPosition().y + movement.y >= 0)
             {
-                bird.move(-movement.x, movement.y);
-                hitbox.move(-movement.x, movement.y);
+                bird.move({-movement.x, movement.y});
+                hitbox.move({-movement.x, movement.y});
             }
         }
     }
@@ -188,13 +198,13 @@ private:
 
     sf::SoundBuffer jumpBuffer;
     sf::Sound jumpSound;
-
+    
     float _gravity;
     float _jump;
     float _velocity;
     float _terminalVelocity;
     float _rotate;
-    float _birdtexrectTop;
+    int _birdtexrectTop;
 
     sf::Clock clock;
     sf::Clock _jumpClock;

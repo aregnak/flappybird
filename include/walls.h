@@ -14,7 +14,7 @@ public:
     Wall(float x, float y)
         : _moveSpeed(-350.f)
     {
-        wall.setPosition(x, y);
+        wall.setPosition({x, y});
         wall.setSize(sf::Vector2f(80, 700));
 
         if (!texture.loadFromFile("res/sprite/pipetest.png"))
@@ -26,12 +26,14 @@ public:
         wall.setTexture(&texture);
     }
 
+    // move walls towards left
     void update(sf::Time& deltaTime)
     {
-        wall.move(_moveSpeed * deltaTime.asSeconds(), 0);
+        wall.move({_moveSpeed * deltaTime.asSeconds(), 0.f});
         //
     }
 
+    // get position of walls, since y doesnt matter only x is returned
     float getX() const
     {
         return wall.getPosition().x; //
@@ -44,7 +46,13 @@ public:
 
     bool collision(const sf::Shape& item) const
     {
-        return wall.getGlobalBounds().intersects(item.getGlobalBounds());
+        std::optional<sf::FloatRect> checkCollision = wall.getGlobalBounds().findIntersection(item.getGlobalBounds());
+        
+        if (!checkCollision)
+        {
+            return false;
+        }
+        return true;
     }
 
 private:
