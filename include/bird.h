@@ -27,6 +27,8 @@ public:
         , _canJump(true)
         , _rotate(0.f)
         , _birdtexrectTop(0)
+        , jumpBuffer("res/sound/sfx_wing.wav")
+        , jumpSound(jumpBuffer)
     {
         // bird player init
         bird.setSize(sf::Vector2f(x, y));
@@ -49,9 +51,10 @@ public:
         birdTextRect = sf::IntRect({0, 0}, {16, 16});
         bird.setTextureRect(birdTextRect);
         bird.setTexture(&texture);
+
     }
 
-    void handleEvent(const auto* keyDown, sf::Sound& jumpSound)
+    void handleEvent(const auto* keyDown)
     {         
         // jumping when space pressed
         if (keyDown->scancode == sf::Keyboard::Scancode::Space &&
@@ -202,8 +205,8 @@ private:
     sf::Texture texture;
     sf::IntRect birdTextRect;
 
-    // sf::SoundBuffer jumpBuffer;
-    // sf::Sound jumpSound;
+    sf::SoundBuffer jumpBuffer;
+    sf::Sound jumpSound;
 
     sf::Clock clock;
     sf::Clock _jumpClock;

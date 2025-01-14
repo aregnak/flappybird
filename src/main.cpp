@@ -112,8 +112,7 @@ int main()
     sf::Sound passSound = createPassSound();
     sf::Sound hitSound = createHitSound();
     sf::Sound dieSound = createDieSound();
-    sf::Sound jumpSound = createJumpSound();
-    
+    //sf::Sound jumpSound = createJumpSound();
 
     sf::Texture bgTexture;
     if (!bgTexture.loadFromFile("res/sprite/Background/Background7.png"))
@@ -183,7 +182,7 @@ int main()
                 // handleEvent directly receives the key instead of checking again with event in in bird.h
                 else if (!gameOver && !mainMenu && !gamePaused && !hitWall)
                 {
-                    bird.handleEvent(keyDown, jumpSound);
+                    bird.handleEvent(keyDown);
                 }
             }
         }

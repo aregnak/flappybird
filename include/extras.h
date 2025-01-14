@@ -100,10 +100,10 @@ sf::Sound createDieSound()
     return dieSound;
 }   
 
-sf::SoundBuffer jumpBuffer("res/sound/sfx_wing.wav");
-sf::Sound createJumpSound()
-{
-    sf::Sound jumpSound(jumpBuffer);
-    jumpSound.setVolume(60.f);
-    return jumpSound;
-}
+// sf::SoundBuffer jumpBuffer("res/sound/sfx_wing.wav");
+// sf::Sound createJumpSound()
+// {
+//     sf::Sound jumpSound(jumpBuffer);
+//     jumpSound.setVolume(60.f);
+//     return jumpSound;
+// }
