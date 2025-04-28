@@ -1,10 +1,10 @@
-#pragma once 
+#pragma once
 
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-  
+
 // game texts
 sf::Text createGameOverText(sf::Font& font, const sf::RenderWindow& window)
 {
@@ -74,7 +74,7 @@ sf::Sound createPointSound()
     sf::Sound pointSound(pointBuffer);
     pointSound.setVolume(40.f);
     return pointSound;
-}    
+}
 
 sf::SoundBuffer passBuffer("res/sound/sfx_swooshing.wav");
 sf::Sound createPassSound()
@@ -98,12 +98,4 @@ sf::Sound createDieSound()
     sf::Sound dieSound(dieBuffer);
     dieSound.setVolume(40.f);
     return dieSound;
-}   
-
-// sf::SoundBuffer jumpBuffer("res/sound/sfx_wing.wav");
-// sf::Sound createJumpSound()
-// {
-//     sf::Sound jumpSound(jumpBuffer);
-//     jumpSound.setVolume(60.f);
-//     return jumpSound;
-// }
+}

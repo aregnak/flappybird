@@ -43,19 +43,24 @@ public:
     }
 
 private:
+    // bird shape and hitbox
     sf::RectangleShape bird;
     sf::CircleShape hitbox;
 
+    // textures
     sf::Texture texture;
     sf::IntRect birdTextRect;
 
+    // sounds
     sf::SoundBuffer jumpBuffer;
     sf::Sound jumpSound;
 
+    // delta time dependencies
     sf::Clock clock;
     sf::Clock _jumpClock;
     sf::Time _jumpCooldown;
 
+    // bird's parameters
     float _gravity;
     float _jump;
     float _velocity;
