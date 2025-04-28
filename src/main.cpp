@@ -139,7 +139,7 @@ int main()
             {
                 window.close();
             }
-            else if (const auto* keyDown = event->getIf<sf::Event::KeyPressed>())
+            else if (const sf::Event::KeyPressed* keyDown = event->getIf<sf::Event::KeyPressed>())
             {
                 if (gameOver && keyDown->scancode == sf::Keyboard::Scancode::Space)
                 {
