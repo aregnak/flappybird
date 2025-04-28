@@ -12,11 +12,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
 
 #include "bird.h"
 #include "walls.h"
-#include "extras.h"
+#include "loadSounds.h"
+#include "loadHS.h"
 
 #define screen_width 800
 #define screen_height 800
@@ -32,29 +32,6 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
         walls.push_back(Wall(window.getSize().x, wallY));
         walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
     }
-}
-
-void saveHighScore(int highscore)
-{
-    std::ofstream outFile("save/highscore.txt");
-    if (outFile.is_open())
-    {
-        outFile << highscore;
-        outFile.close();
-    }
-}
-
-int loadHighScore()
-{
-    std::ifstream inFile("save/highscore.txt"); //
-    int highscore = 0;
-    if (inFile.is_open())
-    {
-        inFile >> highscore;
-        inFile.close();
-    }
-
-    return highscore;
 }
 
 int main()

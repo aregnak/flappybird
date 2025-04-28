@@ -50,6 +50,7 @@ void Bird::handleEvent(const sf::Event::KeyPressed* keyDown)
     }
 
     // changing bird color by pressing G
+    // no idea why G
     if (keyDown->scancode == sf::Keyboard::Scancode::G)
     {
         if (_birdtexrectTop <= 80)
