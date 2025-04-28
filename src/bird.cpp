@@ -37,7 +37,7 @@ Bird::Bird(float x, float y)
 
 }
 
-void Bird::handleEvent(const auto* keyDown)
+void Bird::handleEvent(const sf::Event::KeyPressed* keyDown)
 {
     // jumping when space pressed
     if (keyDown->scancode == sf::Keyboard::Scancode::Space &&

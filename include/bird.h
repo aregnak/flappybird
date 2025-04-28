@@ -20,7 +20,7 @@ class Bird
 public:
     Bird(float x, float y);
 
-    void handleEvent(const auto* keyDown);
+    void handleEvent(const sf::Event::KeyPressed* keyDown);
     void update(sf::Time deltaTime);
     void reset();
     void deathAnimation();
