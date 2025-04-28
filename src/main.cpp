@@ -9,15 +9,14 @@
 
 #include <algorithm>
 #include <string>
-#include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
 
-#include "bird.h"
-#include "walls.h"
-#include "extras.h"
+#include "../include/bird.h"
+#include "../include/walls.h"
+#include "../include/extras.h"
 
 #define screen_width 800
 #define screen_height 800
@@ -31,7 +30,7 @@ void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX
         float wallY =
             (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
         walls.push_back(Wall(window.getSize().x, wallY));
-        walls.push_back(Wall(window.getSize().x, wallY - 880));
+        walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
     }
 }
 
@@ -78,6 +77,7 @@ int main()
 
     // creating walls vector, all the walls are managed here
     std::vector<Wall> walls;
+    walls.reserve(6);
 
 
     // game variable inits
@@ -100,7 +100,7 @@ int main()
     {
         std::cerr << "Could not load font" << std::endl;
     }
-    
+
     // initialize game texts and sounds
     sf::Text gameOverText = createGameOverText(font, window);
     sf::Text mainMenuText = createMainMenuText(font, window);
@@ -161,7 +161,7 @@ int main()
                     mainMenu = false;
                     continue;
                 }
-                
+
                 // unpause the game with either esc or P
                 if (!gamePaused && !mainMenu && !gameOver &&
                         keyDown->scancode == sf::Keyboard::Scancode::Escape ||
@@ -256,6 +256,7 @@ int main()
                 }
             }
             spawnWalls(window, walls, wallX);
+            // std::cout << walls.size() << std::endl;
 
             bird.update(deltaTime);
             bird.drawTo(window);
