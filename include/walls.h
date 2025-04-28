@@ -20,21 +20,12 @@ Position is decided when creating the object, size and speed decided in here.
 class Wall
 {
 public:
-    Wall(float x, float y)
-        : _moveSpeed(-350.f)
-    {
-        wall.setPosition({x, y});
-        wall.setSize(sf::Vector2f(80, 700));
+    Wall(float x, float y);
 
-        if (!texture.loadFromFile("res/sprite/pipetest.png"))
-        {
-            std::cout << "pipe texture failed" << std::endl;
-            system("pause");
-        }
+    // check for collision with an item, can be anything but is used with bird hitbox
+    const bool collision(const sf::Shape& item);
 
-        wall.setTexture(&texture);
-    }
-
+    // leaving these here as they probably benefit from being inline
     // move walls towards left
     void update(sf::Time& deltaTime)
     {
@@ -47,20 +38,8 @@ public:
     {
         return wall.getPosition().x; //
     }
-   
-    // check for collision with an item, can be anything but is used with bird hitbox
-    bool collision(const sf::Shape& item) const
-    {
-        // new way of doing it with std::optional in SFML 3.0
-        std::optional<sf::FloatRect> checkCollision = wall.getGlobalBounds().findIntersection(item.getGlobalBounds());
-        
-        if (!checkCollision)
-        {
-            return false;
-        }
-        return true;
-    }
 
+    // render to the screen
     void drawTo(sf::RenderWindow& window)
     {
         window.draw(wall); //

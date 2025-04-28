@@ -14,9 +14,9 @@
 #include <ctime>
 #include <fstream>
 
-#include "../include/bird.h"
-#include "../include/walls.h"
-#include "../include/extras.h"
+#include "bird.h"
+#include "walls.h"
+#include "extras.h"
 
 #define screen_width 800
 #define screen_height 800
