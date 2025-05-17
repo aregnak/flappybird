@@ -5,3 +5,5 @@
 flappy
 *.out
 
+# build dir
+build/

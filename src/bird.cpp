@@ -1,6 +1,5 @@
 #include "bird.h"
 
-
 Bird::Bird(float x, float y)
     : _gravity(1800.f)
     , _jump(-650.f)

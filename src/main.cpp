@@ -18,10 +18,33 @@
 #include "loadSounds.h"
 #include "loadHS.h"
 
-#define screen_width 800
-#define screen_height 800
+#define INITIAL_WIDTH 800
+#define INITIAL_HEIGHT 800
+#define ASPECT_RATIO (float)INITIAL_WIDTH/INITIAL_HEIGHT
 
 sf::Texture Wall::texture;
+
+// Function to maintain aspect ratio when window is resized
+void updateView(sf::RenderWindow& window, sf::View& view)
+{
+    float windowWidth = window.getSize().x;
+    float windowHeight = window.getSize().y;
+    float viewWidth;
+    float viewHeight;
+    
+    // Calculate view dimensions to maintain aspect ratio
+    if (windowWidth / windowHeight > ASPECT_RATIO) {
+        viewHeight = INITIAL_HEIGHT;
+        viewWidth = viewHeight * (windowWidth / windowHeight);
+    } else {
+        viewWidth = INITIAL_WIDTH;
+        viewHeight = viewWidth / (windowWidth / windowHeight);
+    }
+    
+    view.setSize(sf::Vector2f(viewWidth, viewHeight));
+    view.setCenter(sf::Vector2f(INITIAL_WIDTH/2.f, INITIAL_HEIGHT/2.f));
+    window.setView(view);
+}
 
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
@@ -37,10 +60,14 @@ int main()
 {
     srand(static_cast<unsigned>(time(0)));
 
-    sf::RenderWindow window(sf::VideoMode({screen_width, screen_height}), "Flappy Bird");
-                            //sf::Style::Default, sf::ContextSettings({0}, {0}, {8}));
+    // Create window with resize enabled
+    sf::RenderWindow window(sf::VideoMode({INITIAL_WIDTH, INITIAL_HEIGHT}), "Flappy Bird", 
+                          sf::Style::Default);
+    
+    // Create view for maintaining aspect ratio
+    sf::View view(sf::FloatRect({0.f, 0.f}, {static_cast<float>(INITIAL_WIDTH), static_cast<float>(INITIAL_HEIGHT)}));
+    updateView(window, view);
 
-    // window.setFramerateLimit(75);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
 
@@ -115,6 +142,10 @@ int main()
             {
                 window.close();
             }
+            else if (const sf::Event::Resized* resizeEvent = event->getIf<sf::Event::Resized>())
+            {
+                updateView(window, view);
+            }
             else if (const sf::Event::KeyPressed* keyDown = event->getIf<sf::Event::KeyPressed>())
             {
                 if (gameOver && keyDown->scancode == sf::Keyboard::Scancode::Space)
@@ -164,13 +195,16 @@ int main()
         }
 
         window.clear();
+        
+        // Set the view before drawing
+        window.setView(view);
 
         if (!gameOver && !mainMenu && !gamePaused)
         {
             // background scrolling effect
             float moveDistance = bgScrollSpeed * deltaTime.asSeconds();
             bg.move({-moveDistance, 0});
-            if (bg.getPosition().x <= -screen_width)
+            if (bg.getPosition().x <= -INITIAL_WIDTH)
             {
                 bg.setPosition({0, 0});
             }
@@ -243,7 +277,7 @@ int main()
 
             sf::Vector2f playerPos = bird.getPos();
 
-            if (playerPos.y >= window.getSize().y - 50)
+            if (playerPos.y >= INITIAL_HEIGHT - 50)
             {
                 bird.deathAnimation();
                 if (!isDead)
