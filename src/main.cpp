@@ -22,6 +22,9 @@
 #define INITIAL_HEIGHT 800
 #define ASPECT_RATIO (float)INITIAL_WIDTH/INITIAL_HEIGHT
 
+// Constant for wall spacing
+#define WALL_GAP 400
+
 sf::Texture Wall::texture;
 
 // Function to maintain aspect ratio when window is resized
@@ -48,11 +51,12 @@ void updateView(sf::RenderWindow& window, sf::View& view)
 
 void spawnWalls(sf::RenderWindow& window, std::vector<Wall>& walls, float& wallX)
 {
-    if (wallX < window.getSize().x / 2.f)
-    {
+    // Check if we need to spawn new walls based on the last wall's position
+    if (window.getSize().x - wallX >= WALL_GAP) {
         float wallY = (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
-            walls.push_back(Wall(window.getSize().x, wallY));
-            walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
+        walls.push_back(Wall(window.getSize().x, wallY));
+        walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
+        //wallX = window.getSize().x; // Update wallX to the position of the new wall
     }
 }
 
