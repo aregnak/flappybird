@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-void saveHighScore(int highscore)
+inline void saveHighScore(int highscore)
 {
     std::ofstream outFile("save/highscore.txt");
     if (outFile.is_open())
@@ -13,7 +13,7 @@ void saveHighScore(int highscore)
     }
 }
 
-int loadHighScore()
+inline int loadHighScore()
 {
     std::ifstream inFile("save/highscore.txt"); //
     int highscore = 0;

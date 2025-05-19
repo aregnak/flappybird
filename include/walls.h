@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -8,7 +10,6 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <iostream>
-
 
 /*-------------------------
 This class creates the walls, adds the texture, and moves the walls horizontally.
@@ -29,7 +30,7 @@ public:
     // move walls towards left
     void update(sf::Time& deltaTime)
     {
-        wall.move({_moveSpeed * deltaTime.asSeconds(), 0.f});
+        wall.move({ _moveSpeed * deltaTime.asSeconds(), 0.f });
         //
     }
 
@@ -40,10 +41,7 @@ public:
     }
 
     // render to the screen
-    void drawTo(sf::RenderWindow& window)
-    {
-        window.draw(wall); //
-    }
+    void drawTo(sf::RenderWindow& window) const { window.draw(wall); }
 
 private:
     sf::RectangleShape wall;

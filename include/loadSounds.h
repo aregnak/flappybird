@@ -6,7 +6,7 @@
 
 
 // game texts
-sf::Text createGameOverText(sf::Font& font, const sf::RenderWindow& window)
+inline sf::Text createGameOverText(sf::Font& font, const sf::RenderWindow& window)
 {
     sf::Text gameOverText(font, "Game Over!\nPress Space to Restart");
     gameOverText.setCharacterSize(40);
@@ -19,7 +19,7 @@ sf::Text createGameOverText(sf::Font& font, const sf::RenderWindow& window)
     return gameOverText;
 }
 
-sf::Text createMainMenuText(sf::Font& font, const sf::RenderWindow& window)
+inline sf::Text createMainMenuText(sf::Font& font, const sf::RenderWindow& window)
 {
     sf::Text mainMenuText(font, "Flappy Bird\nPress Space to start");
     mainMenuText.setCharacterSize(40);
@@ -32,7 +32,7 @@ sf::Text createMainMenuText(sf::Font& font, const sf::RenderWindow& window)
     return mainMenuText;
 }
 
-sf::Text createPausedText(sf::Font& font, const sf::RenderWindow& window)
+inline sf::Text createPausedText(sf::Font& font, const sf::RenderWindow& window)
 {
     sf::Text pausedText(font, "Game Paused\nPress Escape or P");
     pausedText.setCharacterSize(40);
@@ -45,7 +45,7 @@ sf::Text createPausedText(sf::Font& font, const sf::RenderWindow& window)
     return pausedText;
 }
 
-sf::Text createScoreText(sf::Font& font, const sf::RenderWindow& window)
+inline sf::Text createScoreText(sf::Font& font, const sf::RenderWindow& window)
 {
     sf::Text scoreText(font, "");
     scoreText.setCharacterSize(30);
@@ -55,7 +55,7 @@ sf::Text createScoreText(sf::Font& font, const sf::RenderWindow& window)
     return scoreText;
 }
 
-sf::Text createHighscoreText(sf::Font& font, const sf::RenderWindow& window)
+inline sf::Text createHighscoreText(sf::Font& font, const sf::RenderWindow& window)
 {
     sf::Text highscoreText(font, "");
     highscoreText.setCharacterSize(30);
@@ -68,32 +68,32 @@ sf::Text createHighscoreText(sf::Font& font, const sf::RenderWindow& window)
 
 // game sounds
 // buffer is created here to make main.cpp cleaner
-sf::SoundBuffer pointBuffer("res/sound/sfx_point.wav");
-sf::Sound createPointSound()
+inline sf::SoundBuffer pointBuffer("res/sound/sfx_point.wav");
+inline sf::Sound createPointSound()
 {
     sf::Sound pointSound(pointBuffer);
     pointSound.setVolume(40.f);
     return pointSound;
 }
 
-sf::SoundBuffer passBuffer("res/sound/sfx_swooshing.wav");
-sf::Sound createPassSound()
+inline sf::SoundBuffer passBuffer("res/sound/sfx_swooshing.wav");
+inline sf::Sound createPassSound()
 {
     sf::Sound passSound(passBuffer);
     passSound.setVolume(100.f);
     return passSound;
 }
 
-sf::SoundBuffer hitBuffer("res/sound/sfx_hit.wav");
-sf::Sound createHitSound()
+inline sf::SoundBuffer hitBuffer("res/sound/sfx_hit.wav");
+inline sf::Sound createHitSound()
 {
     sf::Sound hitSound(hitBuffer);
     hitSound.setVolume(60.f);
     return hitSound;
 }
 
-sf::SoundBuffer dieBuffer("res/sound/sfx_die.wav");
-sf::Sound createDieSound()
+inline sf::SoundBuffer dieBuffer("res/sound/sfx_die.wav");
+inline sf::Sound createDieSound()
 {
     sf::Sound dieSound(dieBuffer);
     dieSound.setVolume(40.f);

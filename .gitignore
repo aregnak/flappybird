@@ -7,3 +7,6 @@ flappy
 
 # build dir
 build/
+
+# vscode
+.vscode/
