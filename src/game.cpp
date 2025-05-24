@@ -110,14 +110,7 @@ void Game::update(sf::Time deltaTime)
 {
     if (!gameOver && !mainMenu && !gamePaused)
     {
-        // Update background
-        float moveDistance = BG_SCROLL_SPEED * deltaTime.asSeconds();
-        background.move({ -moveDistance, 0 });
-        if (background.getPosition().x <= -INITIAL_WIDTH)
-        {
-            background.setPosition({ 0, 0 });
-        }
-
+        moveBackground(deltaTime);
         // Update walls
         for (Wall& wall : walls)
         {
@@ -279,6 +272,16 @@ void Game::spawnWalls()
     }
 }
 
+void Game::moveBackground(sf::Time deltaTime)
+{
+    float moveDistance = BG_SCROLL_SPEED * deltaTime.asSeconds();
+    background.move({ -moveDistance, 0 });
+    if (background.getPosition().x <= -INITIAL_WIDTH)
+    {
+        background.setPosition({ 0, 0 });
+    }
+}
+
 void Game::resetGame()
 {
     gameOver = false;
@@ -310,6 +313,12 @@ void Game::loadResources()
     {
         std::cerr << "Failed to load background texture";
     }
+    backgroundTexture.setRepeated(true);
+
+    background.setTextureRect(
+        sf::IntRect({ 0, 0 }, { (int)window.getSize().x - ((int)window.getSize().x / 3),
+                                (int)window.getSize().y - ((int)window.getSize().y / 2) }));
+    background.setScale({ window.getSize().x / 256.f, window.getSize().y / 256.f });
 
     // Setup text elements
     gameOverText.setString("Game Over!\nPress Space to Restart");

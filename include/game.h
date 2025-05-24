@@ -6,7 +6,8 @@
 #include "bird.h"
 #include "walls.h"
 
-class Game {
+class Game
+{
 public:
     Game();
     ~Game() = default;
@@ -20,6 +21,7 @@ private:
     void handlePlayerInput(const sf::Event::KeyPressed* keyEvent);
     void updateView();
     void spawnWalls();
+    void moveBackground(sf::Time deltaTime);
     void resetGame();
     void loadResources();
     void initializeGameObjects();
@@ -73,4 +75,4 @@ private:
     int highscore;
     float wallX;
     float currentTime;
-}; 
+};
