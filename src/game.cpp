@@ -300,12 +300,14 @@ void Game::initializeGameObjects()
 void Game::loadResources()
 {
     // Load font
-    if (!font.openFromFile("res/font/Neon.ttf")) {
+    if (!font.openFromFile("res/font/Neon.ttf"))
+    {
         std::cerr << "Failed to load font";
     }
 
     // Load background texture
-    if (!backgroundTexture.loadFromFile("res/sprite/Background/Background7.png")) {
+    if (!backgroundTexture.loadFromFile("res/sprite/Background/Background7.png"))
+    {
         std::cerr << "Failed to load background texture";
     }
 

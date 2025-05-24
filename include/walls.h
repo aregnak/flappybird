@@ -45,7 +45,7 @@ public:
 
 private:
     sf::RectangleShape wall;
-    static sf::Texture texture;
+    inline static sf::Texture texture;
 
     float _moveSpeed;
 };
