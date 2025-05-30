@@ -7,8 +7,8 @@
 
 Game::Game()
     : _bird(45, 45)
-    , background(_backgroundTexture)
-    , gameView(sf::FloatRect(
+    , _background(_backgroundTexture)
+    , _gameView(sf::FloatRect(
           { 0.f, 0.f }, { static_cast<float>(INITIAL_WIDTH), static_cast<float>(INITIAL_HEIGHT) }))
     , _gameOverText(_font, "")
     , _mainMenuText(_font, "")
@@ -35,10 +35,10 @@ Game::Game()
     std::srand(static_cast<unsigned>(std::time(nullptr)));
 
     // Create the window
-    window.create(sf::VideoMode({ INITIAL_WIDTH, INITIAL_HEIGHT }), "Flappy Bird",
-                  sf::Style::Default);
-    window.setVerticalSyncEnabled(true);
-    window.setKeyRepeatEnabled(false);
+    _window.create(sf::VideoMode({ INITIAL_WIDTH, INITIAL_HEIGHT }), "Flappy Bird",
+                   sf::Style::Default);
+    _window.setVerticalSyncEnabled(true);
+    _window.setKeyRepeatEnabled(false);
 
     // Load resources first
     loadResources();
@@ -50,7 +50,7 @@ Game::Game()
 
 void Game::run()
 {
-    while (window.isOpen())
+    while (_window.isOpen())
     {
         sf::Time deltaTime = _deltaTimer.restart();
         processEvents();
@@ -61,11 +61,11 @@ void Game::run()
 
 void Game::processEvents()
 {
-    while (const std::optional event = window.pollEvent())
+    while (const std::optional event = _window.pollEvent())
     {
         if (event->is<sf::Event::Closed>())
         {
-            window.close();
+            _window.close();
         }
         else if (const sf::Event::Resized* resizeEvent = event->getIf<sf::Event::Resized>())
         {
@@ -206,41 +206,41 @@ void Game::update(sf::Time deltaTime)
 
 void Game::render()
 {
-    window.clear();
-    window.setView(gameView);
+    _window.clear();
+    _window.setView(_gameView);
 
-    window.draw(background);
+    _window.draw(_background);
 
     if (!_gameOver && !_mainMenu && !_gamePaused)
     {
         for (const auto& wall : walls)
         {
-            wall.drawTo(window);
+            wall.drawTo(_window);
         }
-        _bird.drawTo(window);
-        window.draw(_scoreText);
-        window.draw(_highscoreText);
+        _bird.drawTo(_window);
+        _window.draw(_scoreText);
+        _window.draw(_highscoreText);
     }
     else if (_gameOver && !_mainMenu)
     {
-        window.draw(_gameOverText);
+        _window.draw(_gameOverText);
     }
     else if (_mainMenu && !_gamePaused)
     {
-        window.draw(_mainMenuText);
+        _window.draw(_mainMenuText);
     }
     else if (_gamePaused)
     {
-        window.draw(_pausedText);
+        _window.draw(_pausedText);
     }
 
-    window.display();
+    _window.display();
 }
 
 void Game::updateView()
 {
-    float windowWidth = window.getSize().x;
-    float windowHeight = window.getSize().y;
+    float windowWidth = _window.getSize().x;
+    float windowHeight = _window.getSize().y;
     float viewWidth;
     float viewHeight;
 
@@ -255,30 +255,30 @@ void Game::updateView()
         viewHeight = viewWidth / (windowWidth / windowHeight);
     }
 
-    gameView.setSize(sf::Vector2f(viewWidth, viewHeight));
-    gameView.setCenter(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
-    window.setView(gameView);
+    _gameView.setSize(sf::Vector2f(viewWidth, viewHeight));
+    _gameView.setCenter(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
+    _window.setView(_gameView);
 }
 
 void Game::spawnWalls()
 {
-    if (walls.empty() || window.getSize().x - _wallX >= WALL_GAP)
+    if (walls.empty() || _window.getSize().x - _wallX >= WALL_GAP)
     {
         float wallY =
             (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
-        walls.push_back(Wall(window.getSize().x, wallY));
-        walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
-        _wallX = window.getSize().x;
+        walls.push_back(Wall(_window.getSize().x, wallY));
+        walls.push_back(Wall(_window.getSize().x, wallY - 880)); // second wall
+        _wallX = _window.getSize().x;
     }
 }
 
 void Game::moveBackground(sf::Time deltaTime)
 {
     float moveDistance = BG_SCROLL_SPEED * deltaTime.asSeconds();
-    background.move({ -moveDistance, 0 });
-    if (background.getPosition().x <= -INITIAL_WIDTH)
+    _background.move({ -moveDistance, 0 });
+    if (_background.getPosition().x <= -INITIAL_WIDTH)
     {
-        background.setPosition({ 0, 0 });
+        _background.setPosition({ 0, 0 });
     }
 }
 
@@ -291,7 +291,7 @@ void Game::resetGame()
     _score = 0;
     _bird.reset();
     walls.clear();
-    walls.push_back(Wall(60, window.getSize().y));
+    walls.push_back(Wall(60, _window.getSize().y));
 }
 
 void Game::initializeGameObjects()
@@ -315,10 +315,10 @@ void Game::loadResources()
     }
     _backgroundTexture.setRepeated(true);
 
-    background.setTextureRect(
-        sf::IntRect({ 0, 0 }, { (int)window.getSize().x - ((int)window.getSize().x / 3),
-                                (int)window.getSize().y - ((int)window.getSize().y / 2) }));
-    background.setScale({ window.getSize().x / 256.f, window.getSize().y / 256.f });
+    _background.setTextureRect(
+        sf::IntRect({ 0, 0 }, { (int)_window.getSize().x - ((int)_window.getSize().x / 3),
+                                (int)_window.getSize().y - ((int)_window.getSize().y / 2) }));
+    _background.setScale({ _window.getSize().x / 256.f, _window.getSize().y / 256.f });
 
     // Setup text elements
     _gameOverText.setString("Game Over!\nPress Space to Restart");

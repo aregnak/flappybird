@@ -26,10 +26,10 @@ public:
     void deathAnimation();
 
     // inline functions
-    void drawTo(sf::RenderWindow& window)
+    void drawTo(sf::RenderWindow& _window)
     {
-        window.draw(_bird);
-        //window.draw(hitbox);
+        _window.draw(_bird);
+        //_window.draw(hitbox);
     }
 
     sf::Vector2f getPos()

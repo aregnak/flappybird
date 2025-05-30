@@ -41,7 +41,7 @@ public:
     }
 
     // render to the screen
-    void drawTo(sf::RenderWindow& window) const { window.draw(wall); }
+    void drawTo(sf::RenderWindow& _window) const { _window.draw(wall); }
 
 private:
     sf::RectangleShape wall;

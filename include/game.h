@@ -38,13 +38,13 @@ private:
     sf::Texture _backgroundTexture;
 
     // Window and view
-    sf::RenderWindow window;
-    sf::View gameView;
+    sf::RenderWindow _window;
+    sf::View _gameView;
 
     // Game objects
     Bird _bird;
     std::vector<Wall> walls;
-    sf::Sprite background;
+    sf::Sprite _background;
 
     // UI elements
     sf::Text _gameOverText;
