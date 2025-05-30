@@ -7,29 +7,29 @@
 
 Game::Game()
     : _bird(45, 45)
-    , background(backgroundTexture)
+    , background(_backgroundTexture)
     , gameView(sf::FloatRect(
           { 0.f, 0.f }, { static_cast<float>(INITIAL_WIDTH), static_cast<float>(INITIAL_HEIGHT) }))
-    , gameOverText(font, "")
-    , mainMenuText(font, "")
-    , pausedText(font, "")
-    , scoreText(font, "")
-    , highscoreText(font, "")
-    , pointSound(createPointSound())
-    , passSound(createPassSound())
-    , hitSound(createHitSound())
-    , dieSound(createDieSound())
-    , gameOver(false)
-    , mainMenu(true)
-    , gamePaused(false)
-    , isPassed(false)
-    , isDead(false)
-    , hitWall(false)
-    , deathSoundPlayed(false)
-    , score(0)
-    , highscore(0)
-    , wallX(0)
-    , currentTime(0)
+    , _gameOverText(_font, "")
+    , _mainMenuText(_font, "")
+    , _pausedText(_font, "")
+    , _scoreText(_font, "")
+    , _highscoreText(_font, "")
+    , _pointSound(createPointSound())
+    , _passSound(createPassSound())
+    , _hitSound(createHitSound())
+    , _dieSound(createDieSound())
+    , _gameOver(false)
+    , _mainMenu(true)
+    , _gamePaused(false)
+    , _isPassed(false)
+    , _isDead(false)
+    , _hitWall(false)
+    , _deathSoundPlayed(false)
+    , _score(0)
+    , _highscore(loadHighScore())
+    , _wallX(0)
+    , _currentTime(0)
 {
     // Initialize random seed
     std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -52,7 +52,7 @@ void Game::run()
 {
     while (window.isOpen())
     {
-        sf::Time deltaTime = deltaTimer.restart();
+        sf::Time deltaTime = _deltaTimer.restart();
         processEvents();
         update(deltaTime);
         render();
@@ -80,27 +80,27 @@ void Game::processEvents()
 
 void Game::handlePlayerInput(const sf::Event::KeyPressed* keyEvent)
 {
-    if (gameOver && keyEvent->scancode == sf::Keyboard::Scancode::Space)
+    if (_gameOver && keyEvent->scancode == sf::Keyboard::Scancode::Space)
     {
         resetGame();
     }
-    else if (mainMenu && keyEvent->scancode == sf::Keyboard::Scancode::Space)
+    else if (_mainMenu && keyEvent->scancode == sf::Keyboard::Scancode::Space)
     {
-        mainMenu = false;
+        _mainMenu = false;
     }
-    else if (!gamePaused && !mainMenu && !gameOver &&
+    else if (!_gamePaused && !_mainMenu && !_gameOver &&
              (keyEvent->scancode == sf::Keyboard::Scancode::Escape ||
               keyEvent->scancode == sf::Keyboard::Scancode::P))
     {
-        gamePaused = true;
+        _gamePaused = true;
     }
-    else if (gamePaused && !mainMenu && !gameOver &&
+    else if (_gamePaused && !_mainMenu && !_gameOver &&
              (keyEvent->scancode == sf::Keyboard::Scancode::Escape ||
               keyEvent->scancode == sf::Keyboard::Scancode::P))
     {
-        gamePaused = false;
+        _gamePaused = false;
     }
-    else if (!gameOver && !mainMenu && !gamePaused && !hitWall)
+    else if (!_gameOver && !_mainMenu && !_gamePaused && !_hitWall)
     {
         _bird.handleEvent(keyEvent);
     }
@@ -108,44 +108,44 @@ void Game::handlePlayerInput(const sf::Event::KeyPressed* keyEvent)
 
 void Game::update(sf::Time deltaTime)
 {
-    if (!gameOver && !mainMenu && !gamePaused)
+    if (!_gameOver && !_mainMenu && !_gamePaused)
     {
         moveBackground(deltaTime);
         // Update walls
         for (Wall& wall : walls)
         {
-            wallX = wall.getX();
+            _wallX = wall.getX();
             wall.update(deltaTime);
 
             if (wall.collision(_bird.getShape()))
             {
                 _bird.deathAnimation();
-                hitWall = true;
+                _hitWall = true;
 
-                if (!isDead)
+                if (!_isDead)
                 {
-                    isDead = true;
-                    hitSound.play();
-                    currentTime = gameTimer.getElapsedTime().asSeconds();
+                    _isDead = true;
+                    _hitSound.play();
+                    _currentTime = _gameTimer.getElapsedTime().asSeconds();
                 }
             }
 
-            if (!isPassed && !hitWall && wall.getX() < _bird.getPos().x &&
+            if (!_isPassed && !_hitWall && wall.getX() < _bird.getPos().x &&
                 wall.getX() > _bird.getPos().x - 20)
             {
-                passSound.play();
-                isPassed = true;
-                score++;
+                _passSound.play();
+                _isPassed = true;
+                _score++;
 
-                if (score % 10 == 0)
+                if (_score % 10 == 0)
                 {
-                    pointSound.play();
+                    _pointSound.play();
                 }
             }
 
             if (wall.getX() < -80)
             {
-                isPassed = false;
+                _isPassed = false;
             }
         }
 
@@ -164,42 +164,42 @@ void Game::update(sf::Time deltaTime)
         if (_bird.getPos().y >= INITIAL_HEIGHT - 50)
         {
             _bird.deathAnimation();
-            if (!isDead)
+            if (!_isDead)
             {
-                isDead = true;
-                hitSound.play();
-                currentTime = gameTimer.getElapsedTime().asSeconds();
+                _isDead = true;
+                _hitSound.play();
+                _currentTime = _gameTimer.getElapsedTime().asSeconds();
             }
         }
 
         // Handle death sequence
-        if (isDead)
+        if (_isDead)
         {
-            if (!deathSoundPlayed)
+            if (!_deathSoundPlayed)
             {
-                if (gameTimer.getElapsedTime().asSeconds() - currentTime > 0.25)
+                if (_gameTimer.getElapsedTime().asSeconds() - _currentTime > 0.25)
                 {
-                    dieSound.play();
-                    deathSoundPlayed = true;
+                    _dieSound.play();
+                    _deathSoundPlayed = true;
                 }
             }
 
-            if (gameTimer.getElapsedTime().asSeconds() - currentTime > 1)
+            if (_gameTimer.getElapsedTime().asSeconds() - _currentTime > 1)
             {
-                gameOver = true;
+                _gameOver = true;
             }
         }
 
         // Update score text
-        scoreText.setString("Score  " + std::to_string(score));
-        highscoreText.setString("High Score  " + std::to_string(highscore));
+        _scoreText.setString("Score  " + std::to_string(_score));
+        _highscoreText.setString("High Score  " + std::to_string(_highscore));
     }
-    else if (gameOver && !mainMenu)
+    else if (_gameOver && !_mainMenu)
     {
-        if (score > highscore)
+        if (_score > _highscore)
         {
-            highscore = score;
-            saveHighScore(highscore);
+            _highscore = _score;
+            saveHighScore(_highscore);
         }
     }
 }
@@ -211,27 +211,27 @@ void Game::render()
 
     window.draw(background);
 
-    if (!gameOver && !mainMenu && !gamePaused)
+    if (!_gameOver && !_mainMenu && !_gamePaused)
     {
         for (const auto& wall : walls)
         {
             wall.drawTo(window);
         }
         _bird.drawTo(window);
-        window.draw(scoreText);
-        window.draw(highscoreText);
+        window.draw(_scoreText);
+        window.draw(_highscoreText);
     }
-    else if (gameOver && !mainMenu)
+    else if (_gameOver && !_mainMenu)
     {
-        window.draw(gameOverText);
+        window.draw(_gameOverText);
     }
-    else if (mainMenu && !gamePaused)
+    else if (_mainMenu && !_gamePaused)
     {
-        window.draw(mainMenuText);
+        window.draw(_mainMenuText);
     }
-    else if (gamePaused)
+    else if (_gamePaused)
     {
-        window.draw(pausedText);
+        window.draw(_pausedText);
     }
 
     window.display();
@@ -262,13 +262,13 @@ void Game::updateView()
 
 void Game::spawnWalls()
 {
-    if (walls.empty() || window.getSize().x - wallX >= WALL_GAP)
+    if (walls.empty() || window.getSize().x - _wallX >= WALL_GAP)
     {
         float wallY =
             (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
         walls.push_back(Wall(window.getSize().x, wallY));
         walls.push_back(Wall(window.getSize().x, wallY - 880)); // second wall
-        wallX = window.getSize().x;
+        _wallX = window.getSize().x;
     }
 }
 
@@ -284,11 +284,11 @@ void Game::moveBackground(sf::Time deltaTime)
 
 void Game::resetGame()
 {
-    gameOver = false;
-    isDead = false;
-    hitWall = false;
-    deathSoundPlayed = false;
-    score = 0;
+    _gameOver = false;
+    _isDead = false;
+    _hitWall = false;
+    _deathSoundPlayed = false;
+    _score = 0;
     _bird.reset();
     walls.clear();
     walls.push_back(Wall(60, window.getSize().y));
@@ -302,18 +302,18 @@ void Game::initializeGameObjects()
 
 void Game::loadResources()
 {
-    // Load font
-    if (!font.openFromFile("res/font/Neon.ttf"))
+    // Load _font
+    if (!_font.openFromFile("res/font/Neon.ttf"))
     {
         std::cerr << "Failed to load font";
     }
 
     // Load background texture
-    if (!backgroundTexture.loadFromFile("res/sprite/Background/Background7.png"))
+    if (!_backgroundTexture.loadFromFile("res/sprite/Background/Background7.png"))
     {
         std::cerr << "Failed to load background texture";
     }
-    backgroundTexture.setRepeated(true);
+    _backgroundTexture.setRepeated(true);
 
     background.setTextureRect(
         sf::IntRect({ 0, 0 }, { (int)window.getSize().x - ((int)window.getSize().x / 3),
@@ -321,42 +321,42 @@ void Game::loadResources()
     background.setScale({ window.getSize().x / 256.f, window.getSize().y / 256.f });
 
     // Setup text elements
-    gameOverText.setString("Game Over!\nPress Space to Restart");
-    gameOverText.setCharacterSize(50);
-    gameOverText.setFillColor(sf::Color::White);
-    gameOverText.setOutlineColor(sf::Color::Black);
-    gameOverText.setOutlineThickness(3);
-    gameOverText.setOrigin(sf::Vector2f(gameOverText.getLocalBounds().size.x / 2,
-                                        gameOverText.getLocalBounds().size.y / 2));
-    gameOverText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
+    _gameOverText.setString("Game Over!\nPress Space to Restart");
+    _gameOverText.setCharacterSize(50);
+    _gameOverText.setFillColor(sf::Color::White);
+    _gameOverText.setOutlineColor(sf::Color::Black);
+    _gameOverText.setOutlineThickness(3);
+    _gameOverText.setOrigin(sf::Vector2f(_gameOverText.getLocalBounds().size.x / 2,
+                                         _gameOverText.getLocalBounds().size.y / 2));
+    _gameOverText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
 
-    mainMenuText.setString("Press Space to Start");
-    mainMenuText.setCharacterSize(50);
-    mainMenuText.setFillColor(sf::Color::White);
-    mainMenuText.setOutlineColor(sf::Color::Black);
-    mainMenuText.setOutlineThickness(3);
-    mainMenuText.setOrigin(sf::Vector2f(mainMenuText.getLocalBounds().size.x / 2,
-                                        mainMenuText.getLocalBounds().size.y / 2));
-    mainMenuText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
+    _mainMenuText.setString("Press Space to Start");
+    _mainMenuText.setCharacterSize(50);
+    _mainMenuText.setFillColor(sf::Color::White);
+    _mainMenuText.setOutlineColor(sf::Color::Black);
+    _mainMenuText.setOutlineThickness(3);
+    _mainMenuText.setOrigin(sf::Vector2f(_mainMenuText.getLocalBounds().size.x / 2,
+                                         _mainMenuText.getLocalBounds().size.y / 2));
+    _mainMenuText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
 
-    pausedText.setString("Paused\nPress P or Esc to Resume");
-    pausedText.setCharacterSize(50);
-    pausedText.setFillColor(sf::Color::White);
-    pausedText.setOutlineColor(sf::Color::Black);
-    pausedText.setOutlineThickness(3);
-    pausedText.setOrigin(sf::Vector2f(pausedText.getLocalBounds().size.x / 2,
-                                      pausedText.getLocalBounds().size.y / 2));
-    pausedText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
+    _pausedText.setString("Paused\nPress P or Esc to Resume");
+    _pausedText.setCharacterSize(50);
+    _pausedText.setFillColor(sf::Color::White);
+    _pausedText.setOutlineColor(sf::Color::Black);
+    _pausedText.setOutlineThickness(3);
+    _pausedText.setOrigin(sf::Vector2f(_pausedText.getLocalBounds().size.x / 2,
+                                       _pausedText.getLocalBounds().size.y / 2));
+    _pausedText.setPosition(sf::Vector2f(INITIAL_WIDTH / 2.f, INITIAL_HEIGHT / 2.f));
 
-    scoreText.setCharacterSize(40);
-    scoreText.setFillColor(sf::Color::White);
-    scoreText.setOutlineColor(sf::Color::Black);
-    scoreText.setOutlineThickness(3);
-    scoreText.setPosition(sf::Vector2f(20, 20));
+    _scoreText.setCharacterSize(40);
+    _scoreText.setFillColor(sf::Color::White);
+    _scoreText.setOutlineColor(sf::Color::Black);
+    _scoreText.setOutlineThickness(3);
+    _scoreText.setPosition(sf::Vector2f(20, 20));
 
-    highscoreText.setCharacterSize(40);
-    highscoreText.setFillColor(sf::Color::White);
-    highscoreText.setOutlineColor(sf::Color::Black);
-    highscoreText.setOutlineThickness(3);
-    highscoreText.setPosition(sf::Vector2f(20, 70));
+    _highscoreText.setCharacterSize(40);
+    _highscoreText.setFillColor(sf::Color::White);
+    _highscoreText.setOutlineColor(sf::Color::Black);
+    _highscoreText.setOutlineThickness(3);
+    _highscoreText.setPosition(sf::Vector2f(20, 70));
 }

@@ -34,8 +34,8 @@ private:
     static constexpr float BG_SCROLL_SPEED = 100.f;
 
     // Resources (must be declared before objects that use them)
-    sf::Font font;
-    sf::Texture backgroundTexture;
+    sf::Font _font;
+    sf::Texture _backgroundTexture;
 
     // Window and view
     sf::RenderWindow window;
@@ -47,32 +47,32 @@ private:
     sf::Sprite background;
 
     // UI elements
-    sf::Text gameOverText;
-    sf::Text mainMenuText;
-    sf::Text pausedText;
-    sf::Text scoreText;
-    sf::Text highscoreText;
+    sf::Text _gameOverText;
+    sf::Text _mainMenuText;
+    sf::Text _pausedText;
+    sf::Text _scoreText;
+    sf::Text _highscoreText;
 
     // Sounds
-    sf::Sound pointSound;
-    sf::Sound passSound;
-    sf::Sound hitSound;
-    sf::Sound dieSound;
+    sf::Sound _pointSound;
+    sf::Sound _passSound;
+    sf::Sound _hitSound;
+    sf::Sound _dieSound;
 
     // Timers
-    sf::Clock gameTimer;
-    sf::Clock deltaTimer;
+    sf::Clock _gameTimer;
+    sf::Clock _deltaTimer;
 
     // Game state
-    bool gameOver;
-    bool mainMenu;
-    bool gamePaused;
-    bool isPassed;
-    bool isDead;
-    bool hitWall;
-    bool deathSoundPlayed;
-    int score;
-    int highscore;
-    float wallX;
-    float currentTime;
+    bool _gameOver;
+    bool _mainMenu;
+    bool _gamePaused;
+    bool _isPassed;
+    bool _isDead;
+    bool _hitWall;
+    bool _deathSoundPlayed;
+    int _score;
+    int _highscore;
+    float _wallX;
+    float _currentTime;
 };
