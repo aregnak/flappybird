@@ -15,8 +15,6 @@
 
 #include <iostream>
 
-//#include "extras.h"
-
 class Bird
 {
 public:
