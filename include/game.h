@@ -42,7 +42,7 @@ private:
     sf::View gameView;
 
     // Game objects
-    Bird bird;
+    Bird _bird;
     std::vector<Wall> walls;
     sf::Sprite background;
 

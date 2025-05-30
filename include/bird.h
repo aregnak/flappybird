@@ -28,35 +28,35 @@ public:
     // inline functions
     void drawTo(sf::RenderWindow& window)
     {
-        window.draw(bird);
+        window.draw(_bird);
         //window.draw(hitbox);
     }
 
     sf::Vector2f getPos()
     {
-        return bird.getPosition(); //
+        return _bird.getPosition(); //
     }
 
     const sf::CircleShape getShape()
     {
-        return hitbox; //
+        return _hitbox; //
     }
 
 private:
     // bird shape and hitbox
-    sf::RectangleShape bird;
-    sf::CircleShape hitbox;
+    sf::RectangleShape _bird;
+    sf::CircleShape _hitbox;
 
     // textures
-    sf::Texture texture;
-    sf::IntRect birdTextRect;
+    sf::Texture _texture;
+    sf::IntRect _birdTextRect;
 
     // sounds
-    sf::SoundBuffer jumpBuffer;
-    sf::Sound jumpSound;
+    sf::SoundBuffer _jumpBuffer;
+    sf::Sound _jumpSound;
 
     // delta time dependencies
-    sf::Clock clock;
+    sf::Clock _clock;
     sf::Clock _jumpClock;
     sf::Time _jumpCooldown;
 

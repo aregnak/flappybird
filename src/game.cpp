@@ -6,7 +6,7 @@
 #include <algorithm>
 
 Game::Game()
-    : bird(45, 45)
+    : _bird(45, 45)
     , background(backgroundTexture)
     , gameView(sf::FloatRect(
           { 0.f, 0.f }, { static_cast<float>(INITIAL_WIDTH), static_cast<float>(INITIAL_HEIGHT) }))
@@ -102,7 +102,7 @@ void Game::handlePlayerInput(const sf::Event::KeyPressed* keyEvent)
     }
     else if (!gameOver && !mainMenu && !gamePaused && !hitWall)
     {
-        bird.handleEvent(keyEvent);
+        _bird.handleEvent(keyEvent);
     }
 }
 
@@ -117,9 +117,9 @@ void Game::update(sf::Time deltaTime)
             wallX = wall.getX();
             wall.update(deltaTime);
 
-            if (wall.collision(bird.getShape()))
+            if (wall.collision(_bird.getShape()))
             {
-                bird.deathAnimation();
+                _bird.deathAnimation();
                 hitWall = true;
 
                 if (!isDead)
@@ -130,8 +130,8 @@ void Game::update(sf::Time deltaTime)
                 }
             }
 
-            if (!isPassed && !hitWall && wall.getX() < bird.getPos().x &&
-                wall.getX() > bird.getPos().x - 20)
+            if (!isPassed && !hitWall && wall.getX() < _bird.getPos().x &&
+                wall.getX() > _bird.getPos().x - 20)
             {
                 passSound.play();
                 isPassed = true;
@@ -153,7 +153,7 @@ void Game::update(sf::Time deltaTime)
         spawnWalls();
 
         // Update bird
-        bird.update(deltaTime);
+        _bird.update(deltaTime);
 
         // Clean up off-screen walls
         walls.erase(std::remove_if(walls.begin(), walls.end(),
@@ -161,9 +161,9 @@ void Game::update(sf::Time deltaTime)
                     walls.end());
 
         // Check for ground collision
-        if (bird.getPos().y >= INITIAL_HEIGHT - 50)
+        if (_bird.getPos().y >= INITIAL_HEIGHT - 50)
         {
-            bird.deathAnimation();
+            _bird.deathAnimation();
             if (!isDead)
             {
                 isDead = true;
@@ -217,7 +217,7 @@ void Game::render()
         {
             wall.drawTo(window);
         }
-        bird.drawTo(window);
+        _bird.drawTo(window);
         window.draw(scoreText);
         window.draw(highscoreText);
     }
@@ -289,14 +289,14 @@ void Game::resetGame()
     hitWall = false;
     deathSoundPlayed = false;
     score = 0;
-    bird.reset();
+    _bird.reset();
     walls.clear();
     walls.push_back(Wall(60, window.getSize().y));
 }
 
 void Game::initializeGameObjects()
 {
-    bird.reset();
+    _bird.reset();
     walls.reserve(6);
 }
 
