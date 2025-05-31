@@ -270,7 +270,6 @@ void Game::spawnWalls()
         walls.push_back(Wall(_window.getSize().x, wallY));
         walls.push_back(Wall(_window.getSize().x, wallY - 880)); // second wall
         _wallX = _window.getSize().x;
-        std::cout << _wallX << std::endl;
     }
 }
 
@@ -297,8 +296,9 @@ void Game::resetGame()
     {
         float wallY =
             (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
-        walls.push_back(Wall(800, wallY));
-        walls.push_back(Wall(800, wallY - 880)); // second wall
+        walls.push_back(Wall(static_cast<float>(_window.getSize().x) - WALL_GAP - 10.f, wallY));
+        walls.push_back(Wall(static_cast<float>(_window.getSize().x) - WALL_GAP - 10.f,
+                             wallY - 880)); // second wall
     }
     spawnWalls();
 }
