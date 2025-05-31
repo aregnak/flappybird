@@ -1,6 +1,7 @@
 #include "game.h"
 #include "loadHS.h"
 #include "loadSounds.h"
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
@@ -269,6 +270,7 @@ void Game::spawnWalls()
         walls.push_back(Wall(_window.getSize().x, wallY));
         walls.push_back(Wall(_window.getSize().x, wallY - 880)); // second wall
         _wallX = _window.getSize().x;
+        std::cout << _wallX << std::endl;
     }
 }
 
@@ -291,7 +293,14 @@ void Game::resetGame()
     _score = 0;
     _bird.reset();
     walls.clear();
-    walls.push_back(Wall(60, _window.getSize().y));
+    if (_window.getSize().x > 1000)
+    {
+        float wallY =
+            (rand() % (600 - 200 + 1) + 200); // random position between 600 and 200 pixels
+        walls.push_back(Wall(800, wallY));
+        walls.push_back(Wall(800, wallY - 880)); // second wall
+    }
+    spawnWalls();
 }
 
 void Game::initializeGameObjects()
